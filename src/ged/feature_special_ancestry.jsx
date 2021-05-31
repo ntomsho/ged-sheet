@@ -16,10 +16,21 @@ class FeatureSpecialAncestry extends CharacterFeature {
         }
         this.props.updateFeature(newState, this.props.index, false);
     }
+
+    addAncestrySlots(num) {
+        let newFeature = Object.assign({}, this.props.feature);
+        newFeature.upgrade.ancestries = [];
+        for (let i = 0; i < num; i++) {
+            let newAnc = {ancestry: null}
+            newFeature.ancestries.push(newAnc);
+            newFeature.upgrade.ancestries.push(newAnc);
+        }
+        this.props.updateFeature(newFeature, this.props.index, false);
+    }
     
     titleComp() {
         return <>
-            <h3>Special Ancestry</h3>
+            <h3>Special Ancestry{this.props.feature.upgrade ? " 🌟" : ""}</h3>
             <div>You are born of a non-human people and have special qualities from your heritage.</div>
         </>
     }
@@ -145,7 +156,7 @@ class FeatureSpecialAncestry extends CharacterFeature {
     }
 
     ancestryComp(ancestry, index) {
-        if (!ancestry) {
+        if (!ancestry.ancestry) {
             return (
                 <Button className= "random-button" variant="outline-dark" onClick={() => this.randomizeAncestries(index)}>Roll Ancestry</Button >
             )
@@ -181,7 +192,12 @@ class FeatureSpecialAncestry extends CharacterFeature {
                 <Button className="random-button" variant="outline-dark" onClick={() => this.randomizeAncestries()}>Roll Ancestries</Button>
             </>
         } else {
-            return this.props.feature.ancestries.map((ancestry, i) => this.ancestryComp(ancestry, i));
+            let comps = [];
+            if (this.props.feature.upgrade && !this.props.feature.upgrade.ancestries) {
+                comps.push(<Button className="random-button" variant="outline-dark" onClick={() => this.addAncestrySlots(2)}>Upgrade: Add new Ancestry slots</Button>)
+            }
+            comps.push(this.props.feature.ancestries.map((ancestry, i) => this.ancestryComp(ancestry, i)))
+            return comps;
         }
     }
 }

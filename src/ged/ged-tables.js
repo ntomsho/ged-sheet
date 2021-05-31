@@ -25,6 +25,83 @@ export const CIVILIZED_SKILLS = [
     "Thinkiness"
 ];
 
+export const SKILL_DESCRIPTIONS = {
+    "Believe in Yourself": {
+        covers: "Believe in Yourself covers willpower, courage, and conviction, as well as charm, performance, and leadership abilities.",
+        usedFor: [
+            "Rolls to resist fear or mind-controlling effects",
+            "Rolls to befriend, persuade, lead, or command others",
+            "Rolls to entertain with performance art"
+        ]
+    },
+    "Brute Force": {
+        covers: "Brute Force covers physical strength, might, battle prowess, and ability to bully or intimidate with physical threats.",
+        usedFor: [
+            "Attack rolls with any melee weapon or unarmed attacks",
+            "Attack rolls with heavy thrown weapons",
+            "Defense rolls to block with a shield",
+            "Rolls to lift, push, or smash objects or intimidate people"
+        ]
+    },
+    "Cardio": {
+        covers: "Cardio covers athleticism, endurance, physical health, and skill at running, jumping, climbing, and swimming.",
+        usedFor: [
+            "Defense rolls to block with a shield",
+            "Rolls to run, jump, climb, or swim",
+            "Rolls to resist fatigue, poison, disease, and life-draining effects"
+        ]
+    },
+    "Creepin\'": {
+        covers: "Creepin’ covers stealth, lock-picking, pickpocketing, lying, deception, and general thievery skills.",
+        usedFor: [
+            "Attack rolls against unaware or surprised targets",
+            "Rolls to remain undetected, to steal unnoticed, or bypass locks and traps",
+            "Rolls to trick, deceive, or lie to someone convingly"
+        ]
+    },
+    "Macgyver": {
+        covers: "Macgyver covers crafting, forging, mixing, repurposing, and any other skills related to craftsmanship or construction.",
+        usedFor: [
+            "Attack rolls with traps and alchemical concoctions you created",
+            "Rolls to craft or repair equipment, traps, or alchemical concoctions",
+            "Rolls to build, maintain, or find weak points in structures and objects"
+        ]
+    },
+    "Man vs. Wild": {
+        covers: "Man vs. Wild covers wilderness survival, knowledge of flora and fauna, navigation, and harmony with nature and its creatures.",
+        usedFor: [
+            "Rolls to survive in the wilderness including tracking and hunting",
+            "Rolls to identify plants and creatures and have useful knowledge about them",
+            "Rolls to ride, tame, or communicate with beasts"
+        ]
+    },
+    "Ocular Prowess": {
+        covers: "Ocular Prowess covers marksmanship, hand-eye-coordination, perception, and awareness of potential threats.",
+        usedFor: [
+            "Attack rolls with any ranged or thrown weapon",
+            "Rolls to spot concealed dangers",
+            "Defense rolls against hidden threats",
+            "Rolls to assess a situation or find hidden opportunities"
+        ]
+    },
+    "Rad Moves": {
+        covers: "Rad Moves covers agility, reflexes, speed, and ability to dodge attacks and move quickly in battle.",
+        usedFor: [
+            "Attack rolls with light melee weapons",
+            "Defense rolls to dodge, parry, or take cover",
+            "Rolls to sprint, balance, or perform feats of agility and acrobatics"
+        ]
+    },
+    "Thinkiness": {
+        covers: "Thinkiness covers general knowledge of history, medicine, astronomy, math, languages, and other forms of lore not covered by the other skills.",
+        usedFor: [
+            "Rolls to recall or apply useful information",
+            "Rolls to see through deceptions and trickery or interpret complex information",
+            "Rolls to persuade others with reason and logic"
+        ]
+    }
+}
+
 export const BACKGROUNDS = [
     "Accountant",
     "Carpenter",
@@ -592,7 +669,7 @@ export const SKILL_MASTERIES = {
             ],
             startingDerp: 3,
             upgrade: {
-                description: "If you take this feature again, you begin each session with 4 DERP Points instead of 3, you have Skill & Magic Advantage on your freak accident attacks, and whenever you improve a Failing or Passing roll with a DERP Point, the Consequence (or one related to it) also befalls a nearby enemy (you still take the Consequence as well if you are improving a Failing roll).",
+                upgradeText: "If you take this feature again, you begin each session with 4 DERP Points instead of 3, you have Skill & Magic Advantage on your freak accident attacks, and whenever you improve a Failing or Passing roll with a DERP Point, the Consequence (or one related to it) also befalls a nearby enemy (you still take the Consequence as well if you are improving a Failing roll).",
                 startingDerp: 4
             }
         },
@@ -610,7 +687,7 @@ export const SKILL_MASTERIES = {
                 }
             ],
             upgrade: {
-                description: "If you take this feature again, roll 3 random blessings and choose one as your Saintly Virtue. You always have your Saintly Virtue as one of your blessings each day and you always perform the upgraded version of it. If you perform the Good Deed for your Saintly Virtue, all of your blessings are replenished. You still gain 3 random blessings in addition to your Saintly Virtue when you rest.",
+                upgradeText: "If you take this feature again, roll 3 random blessings and choose one as your Saintly Virtue. You always have your Saintly Virtue as one of your blessings each day and you always perform the upgraded version of it. If you perform the Good Deed for your Saintly Virtue, all of your blessings are replenished. You still gain 3 random blessings in addition to your Saintly Virtue when you rest.",
                 specialRefresh: [
                     {
                         specialType: "Blessing",
@@ -636,8 +713,15 @@ export const SKILL_MASTERIES = {
                 }
             ],
             upgrade: {
-                description: "If you take this feature again, your setlist can contain up to 5 songs and your fame has reached far and wide across the land. Once per session you can gain one of the following benefits:\n-Someone you just met is a fan. You have Circumstance Advantage on all social rolls with them and they’ll be much more inclined to do you favors.\n-You earn 1 cash money from holding a performance or collecting royalties.\n-Encore! Add one Bar to a song or ignore an effect that would prevent you from continuing to perform a song.",
-                checkbox: "Fame used"
+                upgradeText: "If you take this feature again, your setlist can contain up to 5 songs and your fame has reached far and wide across the land. Once per session you can gain one of the following benefits:\n-Someone you just met is a fan. You have Circumstance Advantage on all social rolls with them and they’ll be much more inclined to do you favors.\n-You earn 1 cash money from holding a performance or collecting royalties.\n-Encore! Add one Bar to a song or ignore an effect that would prevent you from continuing to perform a song.",
+                checkbox: "Fame used",
+                specialRefresh: [
+                    {
+                        specialType: "Song",
+                        number: 5,
+                        refreshOn: "rest"
+                    }
+                ]
             }
         }
     },
@@ -648,7 +732,7 @@ export const SKILL_MASTERIES = {
                 "You have Skill Advantage on rolls to run, jump, climb, swim and throw things including attack rolls with throwing weapons. You deal standard damage with improvised throwing weapons, but still take +1 Difficulty on the attack roll."
             ],
             upgrade: {
-                description: "If you take this feature again, your thrown weapon attacks (but not improvised thrown weapons) deal enhanced damage and you have Magic Advantage (in addition to Skill Advantage) on rolls to run, jump, climb, or swim"
+                upgradeText: "If you take this feature again, your thrown weapon attacks (but not improvised thrown weapons) deal enhanced damage and you have Magic Advantage (in addition to Skill Advantage) on rolls to run, jump, climb, or swim"
             }
         },
         "Ragesmasher": {
@@ -665,7 +749,7 @@ export const SKILL_MASTERIES = {
                 refreshAmt: 1
             },
             upgrade: {
-                description: "If you take this feature again, your Rage resets to 3 points when you rest and your max Health increases by 2.",
+                upgradeText: "If you take this feature again, your Rage resets to 3 points when you rest and your max Health increases by 2.",
                 resource: {
                     name: "Rage",
                     max: null,
@@ -694,8 +778,9 @@ export const SKILL_MASTERIES = {
                     }
                 ]
             },
+            checkbox: "Shield cracked",
             upgrade: {
-                description: "If you take this feature again, both heavy and superheavy armor give you two additional points of Armor when worn (7 for heavy armor, 9 for superheavy armor).",
+                upgradeText: "If you take this feature again, both heavy and superheavy armor give you two additional points of Armor when worn (7 for heavy armor, 9 for superheavy armor).",
                 armor: 2
             }
         }
@@ -708,7 +793,7 @@ export const SKILL_MASTERIES = {
                 "Whenever you succeed on a defense roll against an enemy’s physical attack, you trick them into making a mistake, giving the next attack roll against them Circumstance Advantage. If you are the one who makes that attack, you also have Skill Advantage on the attack.",
             ],
             upgrade: {
-                description: "If you take this feature again, you have Magic Advantage on the first defense roll you make each scene and you deal enhanced damage when attacking an enemy that you have just tricked with a successful defense roll."
+                upgradeText: "If you take this feature again, you have Magic Advantage on the first defense roll you make each scene and you deal enhanced damage when attacking an enemy that you have just tricked with a successful defense roll."
             }
         },
         "Ne\'erdowell": {
@@ -719,16 +804,16 @@ export const SKILL_MASTERIES = {
             ],
             specialRefresh: [
                 {
-                    specialType: "rogueTricks",
+                    specialType: "Rogue Trick",
                     number: 4,
                     refreshOn: "resupply"
                 }
             ],
             upgrade: {
-                description: "If you take this feature again, you can have up to 7 rogue tricks at once and, once per session, you can retroactively declare (with the Director’s approval) that you stole something earlier.",
+                upgradeText: "If you take this feature again, you can have up to 7 rogue tricks at once and, once per session, you can retroactively declare (with the Director’s approval) that you stole something earlier.",
                 specialRefresh: [
                     {
-                        specialType: "rogueTricks",
+                        specialType: "Rogue Trick",
                         number: 7,
                         refreshOn: "resupply"
                     }
@@ -742,7 +827,7 @@ export const SKILL_MASTERIES = {
                 "You have Skill Advantage on rolls to move stealthily."
             ],
             upgrade: {
-                description: "If you take this feature again, you gain Magic Advantage on attacks with the element of surprise and, once per session you can declare (with the Director’s approval) that no one was looking and you disappeared from sight, only to reappear at any opportune time.",
+                upgradeText: "If you take this feature again, you gain Magic Advantage on attacks with the element of surprise and, once per session you can declare (with the Director’s approval) that no one was looking and you disappeared from sight, only to reappear at any opportune time.",
                 checkbox: "Vanish used"
             }
         }
@@ -762,13 +847,13 @@ export const SKILL_MASTERIES = {
             },
             specials: ["Rune", "Rune", "Rune"],
             upgrade: {
-                description: "If you take this feature again, you learn 3 new runes and you gain a second Runic point.",
+                upgradeText: "If you take this feature again, you learn 3 new runes and you gain a second Runic point.",
                 resource: {
                     name: "Runic",
                     max: 2,
                     refreshOn: "rest"
                 },
-                specials: ["Rune", "Rune", "Rune"]
+                specials: ["Rune", "Rune", "Rune", "Rune", "Rune", "Rune"]
             }
         },
         "It\'s a Trap!": {
@@ -793,7 +878,7 @@ export const SKILL_MASTERIES = {
                 }
             ],
             upgrade: {
-                description: "If you take this feature again, you can have up to 5 trap kits and 3 element upgrades at once.",
+                upgradeText: "If you take this feature again, you can have up to 5 trap kits and 3 element upgrades at once.",
                 specialRefresh: [
                     {
                         specialType: "Trap",
@@ -829,7 +914,7 @@ export const SKILL_MASTERIES = {
                 }
             ],
             upgrade: {
-                description: "If you take this feature again, you get 6 catalysts instead of 3 and an additional 3 alchemical bases (you choose which type the last 3 are, repeats permitted) when you resupply.",
+                upgradeText: "If you take this feature again, you get 6 catalysts instead of 3 and an additional 3 alchemical bases (you choose which type the last 3 are, repeats permitted) when you resupply.",
                 specialRefresh: [
                 {
                     specialType: "base",
@@ -854,7 +939,7 @@ export const SKILL_MASTERIES = {
                 "If you take an Action observing a target, you can mark it as your quarry. You have Skill Advantage on attack rolls against your target."
             ],
             upgrade: {
-                description: "If you take this feature again, you have Skill Advantage on all ranged attacks and you deal enhanced damage to your quarry."
+                upgradeText: "If you take this feature again, you have Skill Advantage on all ranged attacks and you deal enhanced damage to your quarry."
             }
         },
         "Hippy": {
@@ -872,7 +957,7 @@ export const SKILL_MASTERIES = {
                 }
             ],
             upgrade: {
-                description: "If you take this feature again, your Totemic Form is replenished whenever you partake in “natural medicines” and all of your forms gain an additional benefit depending on the animal type of your Totemic Form:\n-Ancient - Natural weapon that deals enhanced damage (but no Magic Advantage)\n-Creeper - Magic Advantage on rolls to dodge physical attacks and move stealthily\n-Flier - Wings that give Magic Advantage on rolls to clear vertical distance or leap away from danger\n-Grazer - 5 temporary Health\n-Hunter - Natural weapon that gives Magic Advantage on attack rolls with it (but no enhanced damage)\n-Swimmer - Breathe water and air, gain Magic Advantage on rolls to swim and restore 1d6 Health the first time you are submerged in water after assuming the form"
+                upgradeText: "If you take this feature again, your Totemic Form is replenished whenever you partake in “natural medicines” and all of your forms gain an additional benefit depending on the animal type of your Totemic Form:\n-Ancient - Natural weapon that deals enhanced damage (but no Magic Advantage)\n-Creeper - Magic Advantage on rolls to dodge physical attacks and move stealthily\n-Flier - Wings that give Magic Advantage on rolls to clear vertical distance or leap away from danger\n-Grazer - 5 temporary Health\n-Hunter - Natural weapon that gives Magic Advantage on attack rolls with it (but no enhanced damage)\n-Swimmer - Breathe water and air, gain Magic Advantage on rolls to swim and restore 1d6 Health the first time you are submerged in water after assuming the form"
             }
         },
         "Zoomaster": {
@@ -905,7 +990,7 @@ export const SKILL_MASTERIES = {
                 }
             ],
             upgrade: {
-                description: "If you take this feature again, your supply of Crystal Orbs increases from 3 to 6.",
+                upgradeText: "If you take this feature again, your supply of Crystal Orbs increases from 3 to 6.",
                 resource: {
                     name: "Crystal Orbs",
                     max: 6,
@@ -927,7 +1012,7 @@ export const SKILL_MASTERIES = {
                 refreshOn: "rest"
             },
             upgrade: {
-                description: "If you take this feature again, your pool of Foresight points increases to 6 points and your wise investment strategies provide you with one free cash money in dividends per session that you can collect in town or during any of your flashback Actions.",
+                upgradeText: "If you take this feature again, your pool of Foresight points increases to 6 points and your wise investment strategies provide you with one free cash money in dividends per session that you can collect in town or during any of your flashback Actions.",
                 resource: {
                     name: "Foresight",
                     max: 6,
@@ -942,7 +1027,7 @@ export const SKILL_MASTERIES = {
                 "Your insults are so biting and emotionally damaging, that you can use them as an attack roll that deals reduced damage. A target brought to 0 or less Health by an insult attack surrenders or flees the area in shame. Otherwise, they are enraged until they calm down or you take damage or are embarrassed yourself. You and your allies gain Circumstance Advantage on rolls against enraged enemies except rolls to be diplomatic or rolls to insult them again (which take +1 Difficulty for each time you have insulted them before this scene)."
             ],
             upgrade: {
-                description: "If you take this feature again, your insult attacks deal standard damage instead of reduced damage and you can taunt a group of enemies as an area attack."
+                upgradeText: "If you take this feature again, your insult attacks deal standard damage instead of reduced damage and you can taunt a group of enemies as an area attack."
             }
         },
         "Know-It-All": {
@@ -958,7 +1043,7 @@ export const SKILL_MASTERIES = {
                 refreshOn: "session"
             },
             upgrade: {
-                description: "If you take this feature again, roll 3 more knowledges and you can ask the Director three questions relating to your knowledges per session instead of one.",
+                upgradeText: "If you take this feature again, roll 3 more knowledges and you can ask the Director three questions relating to your knowledges per session instead of one.",
                 questions: {
                     name: "Questions",
                     max: 3,
@@ -1192,6 +1277,11 @@ export const WORDS_OF_POWER = [
     "Element",
     "Form",
     "Verb"
+];
+
+export const BEAST_TYPES = [
+    ["Element", "Animal"],
+    ["Animal", "Animal"]
 ]
 
 export const EQUIPMENT = [

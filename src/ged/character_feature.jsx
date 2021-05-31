@@ -13,6 +13,7 @@ class CharacterFeature extends React.Component {
         this.state = {};
         this.randomize = this.randomize.bind(this);
         this.setField = this.setField.bind(this);
+        this.setUpgrade = this.setUpgrade.bind(this);
         this.getTable = this.getTable.bind(this);
         this.updateCustomSpecial = this.updateCustomSpecial.bind(this);
         this.updateSpecial = this.updateSpecial.bind(this)
@@ -20,11 +21,6 @@ class CharacterFeature extends React.Component {
         this.specialComp = this.specialComp.bind(this);
         this.specialRefreshComp = this.specialRefreshComp.bind(this);
         this.refreshSpecial = this.refreshSpecial.bind(this);
-
-        //
-            //To-Do:
-                //+ handle upgrades
-        //
     }
 
     randomize(field) {
@@ -34,13 +30,13 @@ class CharacterFeature extends React.Component {
             newState[field] = table[Math.floor(Math.random() * table.length)];
         }
         if (field === "artifactType") {
-            newState = { feature: newState.feature, artifactType: newState.artifactType }
+            newState = { feature: newState.feature, artifactType: newState.artifactType, upgrade: newState.upgrade }
         } else if (field === "artifact") {
             newState = { feature: newState.feature, artifactType: newState.artifactType, artifact: newState.artifact }
         } else if (field === "trainedSkill") {
-            newState = { feature: newState.feature, trainedSkill: newState.trainedSkill }   
+            newState = { feature: newState.feature, trainedSkill: newState.trainedSkill, upgrade: newState.upgrade }   
         } else if (field === "mastery") {
-            newState = { feature: newState.feature, trainedSkill: newState.trainedSkill, mastery: newState.mastery }
+            newState = { feature: newState.feature, trainedSkill: newState.trainedSkill, mastery: newState.mastery, upgrade: newState.upgrade }
         }
         this.props.updateFeature(newState, this.props.index, !!this.props.feature[field]);
     }
@@ -49,6 +45,23 @@ class CharacterFeature extends React.Component {
         let newState = Object.assign({}, this.props.feature);
         newState[field] = value;
         this.props.updateFeature(newState, this.props.index, false);
+    }
+
+    setUpgrade(field, value) {
+        let newUpgrade = Object.assign({}, this.props.feature.upgrade);
+        newUpgrade[field] = value;
+        this.setField("upgrade", newUpgrade);
+    }
+
+    randomizeUpgrade(field, noDup) {
+        let newState = Object.assign({}, this.props.feature);
+        let newUpgrade = Object.assign({}, this.props.feature.upgrade);
+        const table = this.getTable(field);
+        while (newUpgrade[field] === this.props.feature.upgrade[field] || (noDup && newUpgrade[field] === this.props.feature[field])) {
+            newUpgrade[field] = table[Math.floor(Math.random() * table.length)];
+        }
+        newState.upgrade = newUpgrade;
+        this.props.updateFeature(newState, this.props.index, !!this.props.feature.upgrade[field]);
     }
 
     getTable(field) {
@@ -74,6 +87,7 @@ class CharacterFeature extends React.Component {
             case "Knowledge": return tables.KNOWLEDGES
             case "Derp": return tables.DERPS
             case "Song": return tables.SONGS
+            case "Rogue Trick": return tables.ROGUE_TRICKS
             case "Rune":
             case "Catalyst": return (Math.random() < 0.5 ? tables.ELEMENTS : tables.VERBS)
             case "Word":
@@ -83,71 +97,81 @@ class CharacterFeature extends React.Component {
         }
     }
 
-    updateCustomSpecial(event, specialIndex) {
-        const newState = Object.assign({}, this.state);
+    updateCustomSpecial(event, specialIndex, upgrade) {
+        const newState = Object.assign({}, upgrade ? this.state.upgrade : this.state);
         newState[`customSpecial_${specialIndex}`] = event.target.value;
         this.setState(newState);
     }
 
-    resourceComp(resource) {
-        if (!this.props.feature.resource || this.props.feature.resource.max !== resource.max) {
+    resourceComp(resource, upgrade) {
+        const source = (upgrade ? this.props.feature.upgrade : this.props.feature);
+        const setFunction = (upgrade ? this.setUpgrade : this.setField);
+        if (!source.resource || source.resource.max !== resource.max) {
             let newResource = resource;
             newResource.current = resource.refreshAmt ? resource.refreshAmt : resource.max;
-            return this.setField("resource", newResource);
+            return setFunction("resource", newResource);
         }
         return <>
             <div className="grenze">{resource.name}</div>
             <InputGroup>
                 <InputGroup.Prepend>
-                    <Button disabled={this.props.feature.resource.current <= 0} variant="dark" onClick={() => this.updateResource(false)}>-</Button>
+                    <Button disabled={source.resource.current <= 0} variant="dark" onClick={() => this.updateResource(false, upgrade)}>-</Button>
                 </InputGroup.Prepend>
-                <InputGroup.Text className="grenze">{this.props.feature.resource.current}</InputGroup.Text>
+                <InputGroup.Text className="grenze">{source.resource.current}</InputGroup.Text>
                 <InputGroup.Append>
-                    <Button disabled={this.props.feature.resource.max && this.props.feature.resource.current >= this.props.feature.resource.max} variant="light" onClick={() => this.updateResource(true)}>+</Button>
+                    <Button disabled={source.resource.max && source.resource.current >= source.resource.max} variant="light" onClick={() => this.updateResource(true, upgrade)}>+</Button>
                 </InputGroup.Append>
             </InputGroup>
         </>
     }
 
-    updateResource(increment) {
-        let newCurrent = this.props.feature.resource;
-        if (!this.props.feature.resource.max && increment) {
+    updateResource(increment, upgrade) {
+        const source = (upgrade ? this.props.feature.upgrade : this.props.feature);
+        const setFunction = (upgrade ? this.setUpgrade : this.setField);
+        let newCurrent = source.resource;
+        if (!source.resource.max && increment) {
             newCurrent.current++;
-        } else if (increment && this.props.feature.resource.max && this.props.feature.resource.current < this.props.feature.resource.max) {
+        } else if (increment && source.resource.max && source.resource.current < source.resource.max) {
             newCurrent.current++;
-        } else if (!increment && this.props.feature.resource.current > 0) {
+        } else if (!increment && source.resource.current > 0) {
             newCurrent.current--;
         }
-        this.setField("resource", newCurrent);
+        setFunction("resource", newCurrent);
     }
 
-    updateSpecial(specialType, index, specials) {
-        let newSpecials = Object.assign(new Array(specials.length), this.props.feature.specials);
+    updateSpecial(specialType, index, specials, upgrade) {
+        const source = (upgrade ? this.props.feature.upgrade : this.props.feature);
+        const setFunction = (upgrade ? this.setUpgrade : this.setField);
+        let newSpecials = Object.assign(new Array(specials.length), source.specials);
         const table = this.getTable(specialType);
         newSpecials[index] = table[Math.floor(Math.random() * table.length)];
-        this.setField("specials", newSpecials);
+        setFunction("specials", newSpecials);
     }
 
-    updateRefreshSpecial(specialIndex, listIndex, value) {
-        let newSpecials = Object.assign([], this.props.feature.currentSpecials);
+    updateRefreshSpecial(specialIndex, listIndex, value, upgrade) {
+        const source = (upgrade ? this.props.feature.upgrade : this.props.feature);
+        const setFunction = (upgrade ? this.setUpgrade : this.setField);
+        let newSpecials = Object.assign([], source.currentSpecials);
         if (!newSpecials[specialIndex].specials) {
-            newSpecials[specialIndex].specials = new Array(this.props.feature.currentSpecials[specialIndex].number);
+            newSpecials[specialIndex].specials = new Array(source.currentSpecials[specialIndex].number);
         }
         // else {
-        //     newSpecials[specialIndex].specials = Object.assign([], this.props.feature.currentSpecials[specialIndex].specials);
+        //     newSpecials[specialIndex].specials = Object.assign([], source.currentSpecials[specialIndex].specials);
         // }
         if (value !== undefined) {
             newSpecials[specialIndex].specials[listIndex] = value;
         } else {
-            const table = this.getTable(this.props.feature.currentSpecials[specialIndex].specialType);
+            const table = this.getTable(source.currentSpecials[specialIndex].specialType);
             newSpecials[specialIndex].specials[listIndex] = table[Math.floor(Math.random() * table.length)];
         }
-        this.setField("currentSpecials", newSpecials);
+        setFunction("currentSpecials", newSpecials);
     }
 
-    specialComp(specials) {
-        if (!this.props.feature.specials) {
-            return this.setField("specials", new Array(specials.length));
+    specialComp(specials, upgrade) {
+        const source = (upgrade ? this.props.feature.upgrade : this.props.feature);
+        const setFunction = (upgrade ? this.setUpgrade : this.setField);
+        if (!source.specials) {
+            return setFunction("specials", new Array(specials.length));
         }
         let specialComps = [];
         specials.forEach((special, i) => {
@@ -155,13 +179,13 @@ class CharacterFeature extends React.Component {
             thisComp.push(
                 <span className="grenze">{special.specialType}: </span>
             )
-            if (this.props.feature.specials[i]) {
+            if (source.specials[i]) {
                 thisComp.push(<>
-                    <span>{this.props.feature.specials[i]}</span>
+                    <span>{source.specials[i]}</span>
                 </>)
             }
             thisComp.push(
-                <Button className="random-button" variant={this.props.feature.specials[i] ? "outline-warning" : "outline-dark"} disabled={this.props.rerolls <= 0 && this.props.feature.specials[i]} onClick={() => this.updateSpecial(special, i, specials)}>{this.props.feature.specials[i] ? "Reroll" : "Roll"} {special}</Button>
+                <Button className="random-button" variant={source.specials[i] ? "outline-warning" : "outline-dark"} disabled={this.props.rerolls <= 0 && source.specials[i]} onClick={() => this.updateSpecial(special, i, specials, upgrade)}>{source.specials[i] ? "Reroll" : "Roll"} {special}</Button>
             )
             specialComps.push(
                 <li key={i}>
@@ -175,14 +199,16 @@ class CharacterFeature extends React.Component {
         );
     }
 
-    setFavoriteSpecial(specialIndex, favoriteIndex, specialRefreshObj) {
+    setFavoriteSpecial(specialIndex, favoriteIndex, specialRefreshObj, upgrade) {
+        const source = (upgrade ? this.props.feature.upgrade : this.props.feature);
+        const setFunction = (upgrade ? this.setUpgrade : this.setField);
         let newSpecials;
-        if (this.props.feature.currentSpecials) {
-            newSpecials = Object.assign([], this.props.feature.currentSpecials);
+        if (source.currentSpecials) {
+            newSpecials = Object.assign([], source.currentSpecials);
         } else {
             newSpecials = []
         }
-        let options = Object.assign([], this.state.favoriteSpecialOptions);
+        let options = Object.assign([], upgrade ? this.state.upgrade.favoriteSpecialOptions : this.state.favoriteSpecialOptions);
         const favorite = options.splice(favoriteIndex,1)[0];
         options.unshift(favorite);
         newSpecials[specialIndex] = {
@@ -191,46 +217,53 @@ class CharacterFeature extends React.Component {
             specialType: specialRefreshObj.specialType,
             refreshOn: specialRefreshObj.refreshOn
         }
-        this.setField("currentSpecials", newSpecials);
+        setFunction("currentSpecials", newSpecials);
     }
 
-    populateFavoriteSpecialOptions(specialType, number, reroll) {
+    populateFavoriteSpecialOptions(specialType, number, upgrade, reroll) {
         let options = [];
         for (let i = 0; i < number; i++) {
             const table = this.getTable(specialType);
             options.push(table[Math.floor(Math.random() * table.length)]);
         }
         let newState = Object.assign({}, this.state);
-        newState.favoriteSpecialOptions = options;
+        if (upgrade) {
+            newState.upgrade.favoriteSpecialOptions = options;
+        } else {
+            newState.favoriteSpecialOptions = options;
+        }
         if (reroll) {
             this.props.useReroll();
         }
         this.setState(newState);
     }
 
-    selectFavoriteSpecialComp(specialRefreshObj, index) {
-        if (!this.state.favoriteSpecialOptions) {
+    selectFavoriteSpecialComp(specialRefreshObj, index, upgrade) {
+        const source = (upgrade ? this.state.upgrade : this.state);
+        if (!source.favoriteSpecialOptions) {
             return (
-                <Button className="random-button" variant="outline-dark" onClick={() => this.populateFavoriteSpecialOptions(specialRefreshObj.specialType, specialRefreshObj.number)}>Roll Initial {specialRefreshObj.specialType}s</Button>
+                <Button className="random-button" variant="outline-dark" onClick={() => this.populateFavoriteSpecialOptions(specialRefreshObj.specialType, specialRefreshObj.number, upgrade)}>Roll Initial {specialRefreshObj.specialType}s</Button>
             )
         }
         let comps = [];
-        for (let i = 0; i < this.state.favoriteSpecialOptions.length; i++) {
+        for (let i = 0; i < source.favoriteSpecialOptions.length; i++) {
             comps.push(
-                <Button variant="outline-success" onClick={() => this.setFavoriteSpecial(index, i, specialRefreshObj)}>{this.state.favoriteSpecialOptions[i]}</Button>
+                <Button variant="outline-success" onClick={() => this.setFavoriteSpecial(index, i, specialRefreshObj, upgrade)}>{source.favoriteSpecialOptions[i]}</Button>
             )
         }
         return (
             <>
             <div>Choose one to be your favorite {specialRefreshObj.specialType}</div>
             {comps}
-            <Button className="random-button" variant="outline-warning" onClick={() => this.populateFavoriteSpecialOptions(specialRefreshObj.specialType, specialRefreshObj.number, true)}>Reroll Initial {specialRefreshObj.specialType}s</Button>
+            <Button className="random-button" variant="outline-warning" onClick={() => this.populateFavoriteSpecialOptions(specialRefreshObj.specialType, specialRefreshObj.number, upgrade, true)}>Reroll Initial {specialRefreshObj.specialType}s</Button>
             </>
         )
     }
 
-    specialRefreshComp(specialRefresh) {
-        if (!this.props.feature.currentSpecials) {
+    specialRefreshComp(specialRefresh, upgrade) {
+        const source = (upgrade ? this.props.feature.upgrade : this.props.feature);
+        const setFunction = (upgrade ? this.setUpgrade : this.setField);
+        if (!source.currentSpecials) {
             let specialSelects = [];
             specialRefresh.forEach(special => {
                 if (special.favoriteSpecial) {
@@ -239,7 +272,7 @@ class CharacterFeature extends React.Component {
             })
             if (specialSelects.length > 0) {
                 return (<div>
-                    {specialRefresh.map((special, i) => this.selectFavoriteSpecialComp(special, i))}
+                    {specialRefresh.map((special, i) => this.selectFavoriteSpecialComp(special, i, upgrade))}
                 </div>)
             } else {
                 return (
@@ -261,13 +294,13 @@ class CharacterFeature extends React.Component {
                                 refreshOn: special.refreshOn
                             });
                         });
-                        this.setField("currentSpecials", currentSpecials);
+                        setFunction("currentSpecials", currentSpecials);
                     }}>Set Specials</Button>
                 )
             }
         }
         let specialComps = [];
-        this.props.feature.currentSpecials.forEach((special, i) => {
+        source.currentSpecials.forEach((special, i) => {
             let thisComp = [];
             for (let j = 0; j < special.specials.length; j++) {
                 if (special.specials[j]) {
@@ -278,26 +311,37 @@ class CharacterFeature extends React.Component {
                             <></>
                             :
                             <InputGroup.Append>
-                                <Button variant={(j === 0 && special.favoriteSpecial ? "success" : "light")} onClick={() => this.updateRefreshSpecial(i,j,null)}>X</Button>
+                                <Button variant={(j === 0 && special.favoriteSpecial ? "success" : "light")} onClick={() => this.updateRefreshSpecial(i,j,null,upgrade)}>X</Button>
                             </InputGroup.Append>
                         }
                     </InputGroup>)
                 } else {
-                    thisComp.push(<div key={j}>X</div>)
+                    thisComp.push(
+                    <>
+                    <div key={j}>X</div>
+                    {(j === 0 && specialRefresh[i].refreshFavorite) ?
+                        <InputGroup.Append>
+                            <Button variant="success" onClick={() => this.updateRefreshSpecial(i, j, special.favoriteSpecial, upgrade)}>Refresh</Button>
+                        </InputGroup.Append>
+                        :
+                        <></>
+                    }
+                    </>
+                    )
                 }
             }
             thisComp.push(
                 <Form>
                     <InputGroup>
                         {/* <InputGroup.Prepend><InputGroup.Text>Replace with Custom {special.specialType}</InputGroup.Text></InputGroup.Prepend> */}
-                        <Form.Control type="text" value={this.state[`customSpecial_${i}`]} onChange={(e) => this.updateCustomSpecial(e, i)} />
-                        <InputGroup.Append><Button variant="info" onClick={() => this.addCustomSpecial(i,this.state[`customSpecial_${i}`])}>Add custom {special.specialType}</Button></InputGroup.Append>
+                        <Form.Control type="text" value={this.state[`customSpecial_${i}`]} onChange={(e) => this.updateCustomSpecial(e, i, upgrade)} />
+                        <InputGroup.Append><Button variant="info" onClick={() => this.addCustomSpecial(i,this.state[`customSpecial_${i}`], upgrade)}>Add custom {special.specialType}</Button></InputGroup.Append>
                     </InputGroup>
                 </Form>
             );
             if (special.refreshOn === "resupply") {
                 thisComp.push(
-                    <Button variant="dark" onClick={() => this.refreshSpecial(specialRefresh, i)}>Resupply</Button>
+                    <Button variant="dark" onClick={() => this.refreshSpecial(specialRefresh, i, upgrade)}>Resupply</Button>
                 )
             }
             specialComps.push(
@@ -309,7 +353,7 @@ class CharacterFeature extends React.Component {
         return specialComps;
     }
 
-    refreshSpecial(currentSpecials, specialIndex, returnValue) {
+    refreshSpecial(currentSpecials, specialIndex, upgrade, returnValue) {
         let newSpecials = Object.assign([], currentSpecials);
         let refreshSpecials = [];
         if (currentSpecials[specialIndex].specialType === "Bases") {
@@ -324,14 +368,14 @@ class CharacterFeature extends React.Component {
         if (returnValue) {
             return refreshSpecials;
         } else {
-            this.setField("currentSpecials", newSpecials);
+            upgrade ? this.setUpgrade("currentSpecials", newSpecials) : this.setField("currentSpecials", newSpecials);
         }
     }
 
     checkboxComp(title) {
         return (
             <InputGroup>
-                <InputGroup.Prepend>{title}</InputGroup.Prepend>
+                <InputGroup.Prepend><InputGroup.Text>{title}</InputGroup.Text></InputGroup.Prepend>
                 <InputGroup.Checkbox aria-label />
             </InputGroup>
         )
@@ -353,10 +397,10 @@ class CharacterFeature extends React.Component {
         </>)
     }
 
-    addCustomSpecial(specialIndex, customSpecial) {
-        let newSpecials = Object.assign([], this.props.feature.currentSpecials);
+    addCustomSpecial(specialIndex, customSpecial, upgrade) {
+        let newSpecials = Object.assign([], upgrade ? this.props.feature.upgrade.currentSpecials : this.props.feature.currentSpecials);
         newSpecials[specialIndex].specials.push(customSpecial);
-        this.setField("currentSpecials", newSpecials);
+        upgrade ? this.setUpgrade("currentSpecials", newSpecials) : this.setField("currentSpecials", newSpecials);
     }
     
     render() {
