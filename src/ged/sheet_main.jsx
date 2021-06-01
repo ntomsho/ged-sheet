@@ -20,30 +20,33 @@ import Image from 'react-bootstrap/Image';
 class CharSheet extends React.Component {
     constructor (props) {
         super(props);
-        this.state = {
-            level: 1,
-            rerolls: 4000,
-            charName: "",
-            background: null,
-            appearance: null,
-            derp: null,
-            features: [null, null],
-            bonusSkill: null,
-            experience: 0,
-            health: {
-                current: 7,
-                max: 7
-            },
-            armor: {
-                current: 3,
-                max: 3
-            },
-            derpPoints: 1,
-            inventory: [],
-            conditions: [],
-            dead: false
+        if (window.location.hash) {
+            this.state = JSON.parse(atob(window.location.hash.slice(1)));
+        } else {
+            this.state = {
+                level: 1,
+                rerolls: 4000,
+                charName: "",
+                background: null,
+                appearance: null,
+                derp: null,
+                features: [null, null],
+                bonusSkill: null,
+                experience: 0,
+                health: {
+                    current: 7,
+                    max: 7
+                },
+                armor: {
+                    current: 3,
+                    max: 3
+                },
+                derpPoints: 1,
+                inventory: [],
+                conditions: [],
+                dead: false
+            }
         }
-
         this.rerollTracker = this.rerollTracker.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.updateHealth = this.updateHealth.bind(this);
@@ -60,6 +63,14 @@ class CharSheet extends React.Component {
         this.rest = this.rest.bind(this);
         this.removeUpgrade = this.removeUpgrade.bind(this);
         this.levelUp = this.levelUp.bind(this);
+
+        window.addEventListener("hashchange", () => this.setState(JSON.parse(atob(window.location.hash.slice(1)))));
+    }
+
+    saveState(newState) {
+        const hash = btoa(JSON.stringify(newState));
+        window.location.hash = hash;
+        this.setState(newState);
     }
 
     rerollTracker() {
@@ -75,7 +86,7 @@ class CharSheet extends React.Component {
     handleChange(event) {
         let newState = Object.assign({}, this.state);
         newState["charName"] = event.target.value;
-        this.setState(newState);
+        this.saveState(newState);
         // this.updateState(event.target.name, event.target.value);
     }
 
@@ -104,7 +115,7 @@ class CharSheet extends React.Component {
                 });
             }
         });
-        this.setState(newState);
+        this.saveState(newState);
     }
 
     updateHealth(num) {
@@ -118,13 +129,13 @@ class CharSheet extends React.Component {
                 newState.health.current = this.state.health.current === num ? num - 1 : num;
             }
         }
-        this.setState(newState);
+        this.saveState(newState);
     }
 
     updateArmor(num) {
         let newState = Object.assign({}, this.state);
         newState.armor.current = this.state.armor.current === num ? num - 1 : num;
-        this.setState(newState);
+        this.saveState(newState);
     }
 
     healthTrackerDisp() {
@@ -137,7 +148,7 @@ class CharSheet extends React.Component {
                     className="heart-container"
                     alt="0 Health"
                     fluid
-                    // onClick={() => this.setState({ deathModal: true })}
+                    // onClick={() => this.saveState({ deathModal: true })}
                     src={"https://icons.iconarchive.com/icons/icons8/ios7/256/Healthcare-Skull-icon.png"}
                 />
             </Col>
@@ -187,7 +198,7 @@ class CharSheet extends React.Component {
     updatePlotPoints(num) {
         let newState = Object.assign({}, this.state);
         newState.derpPoints = this.state.derpPoints === num ? num - 1 : num;
-        this.setState(newState);
+        this.saveState(newState);
         // this.updateState('plotPoints', this.charSource().plotPoints === num ? num - 1 : num);
     }
 
@@ -214,25 +225,25 @@ class CharSheet extends React.Component {
         let newState = Object.assign({}, this.state);
         newState.features[index] = obj;
         if (reroll) newState.rerolls--;
-        this.setState(newState);
+        this.saveState(newState);
     }
 
     updateInventory(newInv) {
         let newState = Object.assign({}, this.state);
         newState.inventory = newInv;
-        this.setState(newState);
+        this.saveState(newState);
     }
 
     updateExperience(newExp) {
         let newState = Object.assign({}, this.state);
         newState.experience = newExp;
-        this.setState(newState);
+        this.saveState(newState);
     }
 
     useReroll() {
         let newState = Object.assign({}, this.state);
         newState.rerolls--;
-        this.setState(newState);
+        this.saveState(newState);
     }
 
     populateFeatures() {
@@ -282,7 +293,7 @@ class CharSheet extends React.Component {
                             newState.rerolls--    
                         }
                         newState.features.splice(featureIndex, 1);
-                        return this.setState(newState);
+                        return this.saveState(newState);
                     }
                 }
             }
@@ -293,7 +304,7 @@ class CharSheet extends React.Component {
                 newState.rerolls--;
             }
         }
-        this.setState(newState);
+        this.saveState(newState);
     }
 
     removeUpgrade(featureInd) {
@@ -304,7 +315,7 @@ class CharSheet extends React.Component {
         }
         newState.features.push(null);
         newState.rerolls--;
-        this.setState(newState);
+        this.saveState(newState);
     }
 
     getTable(field) {
@@ -329,7 +340,7 @@ class CharSheet extends React.Component {
         newState.health.current++;
         newState.features.push(null);
         newState.rerolls++;
-        this.setState(newState);
+        this.saveState(newState);
     }
 
     render() {
