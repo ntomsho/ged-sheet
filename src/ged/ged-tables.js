@@ -150,7 +150,7 @@ export const APPEARANCES = [
     "Hairy",
     "Ascetic",
     "Creepy",
-    "Hipster ",
+    "Hipster",
     "Athletic",
     "Dirty",
     "Immaculate",
@@ -676,7 +676,7 @@ export const SKILL_MASTERIES = {
         "Knight of Tushuze": {
             description: "You are a member of the righteous and goodly order of the Knights of Tushuze and can benefit from or hand out their nice and honorable blessings.",
             traits: [
-                "You are gifted with 4 blessings rolled on the Blessings of Tushuze table per day. You can spend a blessing to perform it, either giving yourself or an ally Magic Advantage on a roll with the blessing’s associated Skill or creating the blessing’s described effect. ",
+                "You are gifted with 4 blessings rolled on the Blessings of Tushuze table per day. You can spend a blessing to perform it, either giving yourself or an ally Magic Advantage on a roll with the blessing’s associated Skill or creating the blessing’s described effect.",
                 "Each blessing comes with a good deed that can be done to enhance it. If you perform that deed to the satisfaction of the Director, the blessing is replenished if it was expended and you can use the upgraded version of its effect. Once you perform a good deed, you can’t gain the benefit of another until you next rest. Your blessings are replenished when you rest."
             ],
             specialRefresh: [
@@ -964,36 +964,20 @@ export const SKILL_MASTERIES = {
             description: "You are a skilled tamer of beasts on a lifelong journey to catch every type of creature in the wide world to add to your menagerie.",
             traits: [
                 "When you take this feature, roll three random magic beasts. These creatures make up your starting menagerie. Each beast has 3 Stamina points which are replenished when you rest. You can have one beast out as your active beast at a time; the others must be kept in Crystal Orbs. Spend 1 of your active beast’s Stamina points to command it to take an Action. It has Skill Advantage on anything its base animal would be good at and Magic Advantage on anything its special feature helps with. A beast can also lose 1 Stamina as a Consequence or be killed or permanently chased off as a Serious Consequence. If a beast runs out of Stamina, it is pooped and can take no more Actions. It still counts as your active beast until you return it to its orb.",
-                "Add a supply of 3 Crystal Orbs to your inventory. These devices are used for storing inactive beasts in a state of suspended animation. You can resupply the orbs wherever magic beast handling supplies or your menagerie are available. When you resupply the Crystal Orbs, you can place any beasts you don’t want to take with you in storage and your stock of orbs is refreshed to 3. Any beasts you take with you must be stored in a Crystal Orb. You can summon any of your beasts from a crystal orb and/or send them back to their orb as an Action.",
+                "Add a supply of 4 Crystal Orbs to your inventory. These devices are used for storing inactive beasts in a state of suspended animation. You can resupply the orbs wherever magic beast handling supplies or your menagerie are available. When you resupply the Crystal Orbs, you can place any beasts you don’t want to take with you in storage and your stock of orbs is refreshed to 3. Any beasts you take with you must be stored in a Crystal Orb. You can summon any of your beasts from a crystal orb and/or send them back to their orb as an Action.",
                 "You can use an unoccupied orb to attempt to capture a magic beast you encounter in the wild as an Action using Man vs. Wild. The Difficulty of the roll to capture a beast decreases if they are calm or wounded. A captured beast becomes one of your companions with a full 3 Stamina and can be summoned immediately afterward."
             ],
             resource: {
                 name: "Crystal Orbs",
-                max: 3,
+                max: 4,
                 refreshOn: "resupply"
             },
-            menagerie: [
-                {
-                    beast: null,
-                    stamina: 3,
-                    inOrb: false
-                },
-                {
-                    beast: null,
-                    stamina: 3,
-                    inOrb: false
-                },
-                {
-                    beast: null,
-                    stamina: 3,
-                    inOrb: false
-                }
-            ],
+            menagerie: true,
             upgrade: {
-                upgradeText: "If you take this feature again, your supply of Crystal Orbs increases from 3 to 6.",
+                upgradeText: "If you take this feature again, your supply of Crystal Orbs increases from 4 to 7.",
                 resource: {
                     name: "Crystal Orbs",
-                    max: 6,
+                    max: 7,
                     refreshOn: "resupply"
                 }
             }
@@ -1571,7 +1555,7 @@ export const ANIMALS = {
         "Llama",
         "Skunk",
         "Camel",
-        "Monkey	",
+        "Monkey",
         "Tapir",
         "Deer",
         "Ostrich",
@@ -1636,6 +1620,63 @@ export const BLESSINGS_OF_TUSHUZE = [
     "Humility",
     "Wisdom"
 ];
+
+export const BLESSINGS_INFO = {
+    "Bravery": {
+        skill: "Believe in Yourself",
+        description: "Create a flash of radiant light as an area attack that is blinding to look upon, burns away illusions, and does standard damage to demons and the undead.",
+        goodDeed: "Protect others from a threat you have little hope of defeating.",
+        upgrade: "The radiant light persists for the duration of the scene, allowing you to repeat the attack, and can deal reduced damage to any single target you focus the light on. Undead and demons take enhanced damage from the focused light."
+    },
+    "Generosity": {
+        skill: "Macgyver",
+        description: "You summon a weapon of holy radiant light that lasts for the duration of the scene. It gives Magic Advantage on attacks against demons and the undead and you can deliver a single smiting blow for enhanced damage before the effect ends.",
+        goodDeed: "Give away something valuable or important to you to another in need.",
+        upgrade: "You can make smiting blows with the weapon at will until the effect ends."
+    },
+    "Loyalty": {
+        skill: "Rad Moves",
+        description: "You emanate an invigorating aura that restores 2 Health to you and each nearby ally.",
+        goodDeed: "Refuse a valuable benefit that could be gained by deceiving or betraying a friend, ally, or employer.",
+        upgrade: "The aura restores 1d6 Health to you and each nearby ally."
+    },
+    "Compassion": {
+        skill: "Thinkiness",
+        description: "Lay hands on yourself or an ally, restoring them to full Health and curing them of any poison, disease, or lasting injury.",
+        goodDeed: "Help someone that you have reason to hate or fear or that you know will never be able to repay your kindness.",
+        upgrade: "You can lay hands on an additional person, giving them the full effect as well."
+    },
+    "Honor": {
+        skill: "Brute Force",
+        description: "You conjure a holy shield on your arm that gives you Magic Advantage on rolls to block with it. If you use the shield to intercede and protect an ally, you also gain Skill Advantage. The shield persists for the duration of the scene.",
+        goodDeed: "Refuse an unfair advantage against a hated or dangerous foe.",
+        upgrade: "If you take 1d6 damage while you have the shield, roll twice and take the lower result. The shield also does standard damage if you attack with it and, if you use it to protect an ally, the ally does not take a Consequence even if you fail."
+    },
+    "Mercy": {
+        skill: "Man vs. Wild",
+        description: "You summon a swift and loyal steed conjured from radiant light. It persists for the duration of the scene or until it is destroyed as a Consequence.",
+        goodDeed: "Spare someone that you have reason to hate or fear when it is certain that you could do them real harm.",
+        upgrade: "You summon a winged flying steed."
+    },
+    "Fortitude": {
+        skill: "Cardio",
+        description: "You gain 4 temporary Health that are taken before your regular Health. Any left over at the end of the scene are lost. You can use this blessing as a reaction before you take damage.",
+        goodDeed: "Withstand great pain or personal loss for the benefit of others.",
+        upgrade: "You gain 6 temporary Health instead of 4 and you are immune to poison and disease while you still have at least 1."
+    },
+    "Humility": {
+        skill: "Creepin\'",
+        description: "You become invulnerable to all physical harm for a few minutes. You cannot make any attacks or aggressive Actions during the duration of the effect unless you first declare to all present that you are renouncing the sanctuary, ending the effect early and losing any form of surprise or initiative in battle.",
+        goodDeed: "Turn down well-earned praise or reward.",
+        upgrade: "You can extend the sanctuary to all allies touching you (if any of you renounces the sanctuary, you all lose the protection) or extend the duration to the end of the scene."
+    },
+    "Wisdom": {
+        skill: "Ocular Prowess",
+        description: "Use this blessing after failing an Action roll. That was just a vision of what might come to pass. You undo the Action and can roll it again or act differently.",
+        goodDeed: "Give good counsel to those who don’t deserve it or who might use it against you.",
+        upgrade: "You gain Magic Advantage on any rolls made using the knowledge of what you saw in the vision."
+    }
+}
 
 export const ELEMENTS = [
     "Acid",
@@ -1765,6 +1806,21 @@ export const SONGS = [
     "Mesmerizing Melody",
     "Sorcerer’s Solo"
 ];
+
+export const SONG_INFO = {
+    "Ballad of Battle": "Give an ally enhanced damage on an attack.",
+    "Mosh Pit": "Whenever a character that can hear you tries to make an attack, you can play a Bar to make a defense roll against them. If you succeed, you can redirect their attack to another nearby target of your choice.",
+    "Friendship Shanty": "Make non-hostile people charmed and friendly to you. The effect persists for one day per successful performance roll.",
+    "Power Chord": "Create a blast of sound and force as an attack dealing standard damage.",
+    "Infuriating Limerick": "Roll to infuriate the listener, making them take aggressive action against you until the song ends. You and your allies have Circumstance Advantage on rolls against them for the duration of the song.",
+    "Rap Battle": "Issue a challenge of lyrical insults. If successful, the target must focus on responding or give up and be shamed. If the target responds, your next Action must be to respond or give up, end the song early, and be shamed. If you succeed on the last Bar of the song, the target is shamed. If the target gives up early, you can use another Bar to challenge another target or end the song early. If you fail on one of these rolls, the song ends early and you are shamed. A shamed enemy takes damage equal to the number of successful rolls you made against them. An enemy defeated this way surrenders or flees in shame. Otherwise, they give Circumstance Advantage and attacks against them deal enhanced damage for the duration of the scene. If you are shamed, you can’t perform any more songs for the duration of the scene.",
+    "Invigorating Groove": "An ally gains Magic Advantage on a roll requiring strength, speed, or physical fitness.",
+    "Sleepytime Lullaby": "Make those hearing the song feel drowsy or fall asleep completely.",
+    "Irresistible Hoedown": "Force an enemy to dance to your tune. They abandon whatever they were about to do and you can make them drop something they’re holding or dance their way to a spot within 30 feet.",
+    "Soothing Serenade": "An ally that can hear the song is healed for 1d6 Health.",
+    "Mesmerizing Melody": "Play a siren song that puts targets into a trance. Unless something dramatic catches their attention, they can do nothing but follow you, listen to your song, and wave a light source over their head as long as the song continues.",
+    "Sorcerer’s Solo": "When you add this song to your setlist, roll 3 Words of Power and assemble 2 or 3 of them into a spell per the Words of Power section. Perform this song to create the spell effect. Unlike other songs, this song gets only 1 Bar."
+};
 
 export const VERBS = [
     "Absorb",

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import * as tables from './ged-tables';
 import CharacterFeature from './character_feature';
 import Button from 'react-bootstrap/Button'
 import Dropdown from 'react-bootstrap/Dropdown';
-import Card from 'react-bootstrap/Card';
+import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 
 class FeatureSkillMastery extends CharacterFeature {
@@ -34,13 +34,16 @@ class FeatureSkillMastery extends CharacterFeature {
             components.push(this.checkboxComp(mastery.checkbox));
         }
         if (mastery.resource) {
-            components.push(this.resourceComp(mastery.resource), upgrade);
+            components.push(this.resourceComp(mastery.resource, upgrade));
         }
         if (mastery.specials) {
-            components.push(this.specialComp(mastery.specials), upgrade);
+            components.push(this.specialComp(mastery.specials, upgrade));
         }
         if (mastery.specialRefresh) {
-            components.push(this.specialRefreshComp(mastery.specialRefresh), upgrade);
+            components.push(this.specialRefreshComp(mastery.specialRefresh, upgrade));
+        }
+        if (mastery.menagerie) {
+            components.push(this.zoomasterComp(upgrade));
         }
         components.push(this.masteryChoiceComp(upgrade))
         return components;
@@ -91,6 +94,135 @@ class FeatureSkillMastery extends CharacterFeature {
                     })}
                 </Dropdown.Menu>
             </Dropdown>
+        )
+    }
+
+    updateMenagerie(field, value, beastIndex, upgrade, reroll) {
+        const source = (upgrade ? this.props.feature.upgrade : this.props.feature);
+        const setFunction = (upgrade ? this.setUpgrade : this.setField);
+
+        let newMenagerie = Object.assign([], source.menagerie);
+        if (field === "all") {
+            newMenagerie[beastIndex] = {
+                name: "",
+                beast: this.randomizeBeast(),
+                stamina: 3,
+                inOrb: true
+            }
+        } else if (field === "delete") {
+            newMenagerie.splice(beastIndex, 1);
+        } else if (field === "add") {
+            newMenagerie.push({
+                name: "",
+                beast: value,
+                stamina: 3,
+                inOrb: true
+            });
+        } else {
+            newMenagerie[beastIndex][field] = value;
+        }
+        if (reroll) {
+            this.props.useReroll();
+        }
+        setFunction("menagerie", newMenagerie);
+    }
+
+    randomizeBeast() {
+        const beastType = Math.floor(Math.random() * tables.BEAST_TYPES.length);
+        const table1 = this.getTable(tables.BEAST_TYPES[beastType][0]);
+        const table2 = this.getTable(tables.BEAST_TYPES[beastType][1]);
+        let beastString = table1[Math.floor(Math.random() * table1.length)];
+        if (beastType === 0) {
+            beastString = beastString + " " + table2[Math.floor(Math.random() * table2.length)];
+        } else {
+            beastString += ` with ${table2[Math.floor(Math.random() * table2.length)]} feature`;
+        }
+        return beastString;
+    }
+
+    sendOut(index, upgrade) {
+        const source = (upgrade ? this.props.feature.upgrade : this.props.feature);
+        const setFunction = (upgrade ? this.setUpgrade : this.setField);
+
+        let newMenagerie = Object.assign([], source.menagerie);
+        newMenagerie.forEach(beast => beast.inOrb = true);
+        newMenagerie[index].inOrb = false;
+
+        setFunction("menagerie", newMenagerie);
+    }
+
+    zoomasterComp(upgrade) {
+        const source = (upgrade ? this.props.feature.upgrade : this.props.feature);
+        const setFunction = (upgrade ? this.setUpgrade : this.setField);
+
+        if (!source.menagerie) {
+            let beasts = [];
+            for (let i = 0; i < 3; i++) {
+                beasts.push({
+                    name: "",
+                    beast: this.randomizeBeast(),
+                    stamina: 3,
+                    inOrb: true
+                });
+            }
+            setFunction("menagerie", beasts);
+        } else {
+            const activeBeast = source.menagerie.find(beast => !beast.inOrb)
+            return (
+                <>
+                <h3>Active Beast</h3>
+                {activeBeast ? 
+                    this.beastComp(activeBeast, source.menagerie.indexOf(activeBeast), upgrade)
+                    :
+                    <div>None</div>
+                }
+                <h3>Menagerie</h3>
+                <ul>
+                    {source.menagerie.filter(beast => beast.inOrb).map((beast, i) => {
+                        return (
+                            <li key={i}>
+                                {this.beastComp(beast, i, upgrade)}
+                            </li>
+                        )
+                    })}
+                </ul>
+                <Form>
+                    <Form.Label className="grenze">Add New Beast</Form.Label>
+                    <Form.Control type="text" onChange={(e) => this.changeNewBeastType(e)} placeholder="Beast Type" value={this.state.customBeast} />
+                    <Button variant="outline-success" disabled={!this.state.customBeast} onClick={() => this.updateMenagerie("add", this.state.customBeast,null,upgrade)}>Add New Beast</Button>
+                </Form>
+                </>
+            )
+            //Include add beast form + button
+        }
+    }
+
+    changeNewBeastType(event) {
+        let newState = Object.assign({}, this.state);
+        newState.customBeast = event.target.value;
+        this.setState(newState);
+    }
+
+    beastComp(beast, i, upgrade) {
+        return (
+        <>
+        <Form>
+            <Form.Control type="text" placeholder="Beast name" onChange={(e) => this.updateMenagerie("name", e.target.value, i, upgrade)} value={beast.name}></Form.Control>
+        </Form>
+        <div className="grenze">{beast.beast}</div>
+        <InputGroup>
+            <InputGroup.Prepend>
+                <Button disabled={beast.stamina <= 0} variant="dark" onClick={() => this.updateMenagerie("stamina", beast.stamina - 1, i, upgrade)}>-</Button>
+            </InputGroup.Prepend>
+            <InputGroup.Text className="grenze">Stamina: {beast.stamina} / 3</InputGroup.Text>
+            <InputGroup.Append>
+                <Button disabled={beast.stamina >= 3} variant="light" onClick={() => this.updateMenagerie("stamina", beast.stamina - 1, i, upgrade)}>+</Button>
+            </InputGroup.Append>
+        </InputGroup>
+        <Button variant="outline-dark" onClick={beast.inOrb ? () => this.sendOut(i, upgrade) : () => this.updateMenagerie("inOrb", true, i, upgrade)}>{beast.inOrb ? "Send Out" : "Return to Orb"}</Button>
+        <Button variant="outline-warning" disabled={this.props.rerolls <= 0} onClick={() => this.updateMenagerie("beast", this.randomizeBeast(), i, upgrade, true)}>Reroll Beast</Button>
+        <Button variant="danger" onDoubleClick={() => this.updateMenagerie("delete", null, i, upgrade)}>Permanently Release (double tap)</Button>
+        </>
         )
     }
 

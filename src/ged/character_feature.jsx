@@ -306,7 +306,7 @@ class CharacterFeature extends React.Component {
                 if (special.specials[j]) {
                     thisComp.push(
                     <InputGroup>
-                        <InputGroup.Text>{special.specials[j]}</InputGroup.Text>
+                        {this.specialDisplayComp(special.specialType, special.specials[j])}
                         {special.noReplacement ? 
                             <></>
                             :
@@ -369,6 +369,29 @@ class CharacterFeature extends React.Component {
             return refreshSpecials;
         } else {
             upgrade ? this.setUpgrade("currentSpecials", newSpecials) : this.setField("currentSpecials", newSpecials);
+        }
+    }
+
+    specialDisplayComp(specialType, special) {
+        if (specialType === "Blessing") {
+            const blessing = tables.BLESSINGS_INFO[special];
+            return <Dropdown>
+                <Dropdown.Toggle variant="light"><strong>{special} - {blessing.skill}</strong></Dropdown.Toggle>
+                <Dropdown.Menu>
+                    <Dropdown.Item className="long-text-button">{blessing.description}</Dropdown.Item>
+                    <Dropdown.Item className="long-text-button"><span className="grenze">Good Deed: </span>{blessing.goodDeed}</Dropdown.Item>
+                    <Dropdown.Item className="long-text-button"><span className="grenze">Upgraded: </span>{blessing.upgrade}</Dropdown.Item>
+                </Dropdown.Menu>
+            </Dropdown>
+        } else if (specialType === "Song") {
+            return <Dropdown>
+                        <Dropdown.Toggle variant="light"><strong>{special}</strong></Dropdown.Toggle>
+                        <Dropdown.Menu>
+                        <Dropdown.Item className="long-text-button"><div>{tables.SONG_INFO[special]}</div></Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+        } else {
+            return <InputGroup.Text>{special}</InputGroup.Text>
         }
     }
 
