@@ -109,7 +109,7 @@ class FeatureMagicArtifact extends CharacterFeature {
         }
         if (this.props.feature.artifactType) {
             components.push(
-                <Button className="random-button" variant={this.props.feature.artifact ? "outline-warning" : "outline-dark"} disabled={this.props.rerolls <= 0 && this.props.feature.artifact} onClick={() => this.randomize("artifact")}>{this.props.feature.artifact ? "Reroll" : "Roll"} Artifact</Button>
+                <Button className="random-button" variant={this.props.feature.artifact ? "outline-warning" : "outline-dark"} disabled={this.props.rerolls <= 0 && this.props.feature.artifact} onClick={() => this.randomize(this.props.feature.artifactType)}>{this.props.feature.artifact ? "Reroll" : "Roll"} Artifact</Button>
             )
         }
         components.push(

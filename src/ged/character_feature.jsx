@@ -14,7 +14,6 @@ class CharacterFeature extends React.Component {
         this.randomize = this.randomize.bind(this);
         this.setField = this.setField.bind(this);
         this.setUpgrade = this.setUpgrade.bind(this);
-        this.getTable = this.getTable.bind(this);
         this.updateCustomSpecial = this.updateCustomSpecial.bind(this);
         this.updateSpecial = this.updateSpecial.bind(this)
         this.updateRefreshSpecial = this.updateRefreshSpecial.bind(this);
@@ -25,7 +24,10 @@ class CharacterFeature extends React.Component {
 
     randomize(field) {
         let newState = Object.assign({}, this.props.feature);
-        const table = this.getTable(field);
+        const table = this.props.getTable(field);
+        if (field === "Magic Garb" || field === "Magic Object" || field === "Magic Weapon") {
+            field = "artifact";
+        }
         while (newState[field] === this.props.feature[field]) {
             newState[field] = table[Math.floor(Math.random() * table.length)];
         }
@@ -56,45 +58,12 @@ class CharacterFeature extends React.Component {
     randomizeUpgrade(field, noDup) {
         let newState = Object.assign({}, this.props.feature);
         let newUpgrade = Object.assign({}, this.props.feature.upgrade);
-        const table = this.getTable(field);
+        const table = this.props.getTable(field);
         while (newUpgrade[field] === this.props.feature.upgrade[field] || (noDup && newUpgrade[field] === this.props.feature[field])) {
             newUpgrade[field] = table[Math.floor(Math.random() * table.length)];
         }
         newState.upgrade = newUpgrade;
         this.props.updateFeature(newState, this.props.index, !!this.props.feature.upgrade[field]);
-    }
-
-    getTable(field) {
-        switch (field) {
-            case "combatSkill": return tables.FIGHTING_SKILLS
-            case "artifactType": return tables.MAGIC_ARTIFACTS
-            case "artifact":
-                if (this.props.feature.artifactType === "Magic Garb") return tables.MAGIC_GARB
-                if (this.props.feature.artifactType === "Magic Object") return tables.MAGIC_OBJECTS
-                else return tables.MAGIC_WEAPONS
-            case "trainedSkill": return tables.CIVILIZED_SKILLS
-            case "skillMastery": return tables.SKILL_MASTERIES
-            case "ancestry": return tables.SPECIAL_ANCESTRIES
-            case "weapon":
-                return tables.WEAPONS[tables.WEAPON_TYPES[Math.floor(Math.random() * tables.WEAPON_TYPES.length)]]
-            case "Background": return tables.BACKGROUNDS
-            case "Blessing": return tables.BLESSINGS_OF_TUSHUZE
-            case "Element": return tables.ELEMENTS
-            case "Form": return tables.FORMS
-            case "Verb": return tables.VERBS
-            case "Animal":
-                return tables.ANIMALS[tables.ANIMAL_TYPES[Math.floor(Math.random() * tables.ANIMAL_TYPES.length)]]
-            case "Knowledge": return tables.KNOWLEDGES
-            case "Derp": return tables.DERPS
-            case "Song": return tables.SONGS
-            case "Rogue Trick": return tables.ROGUE_TRICKS
-            case "Rune":
-            case "Catalyst": return (Math.random() < 0.5 ? tables.ELEMENTS : tables.VERBS)
-            case "Word":
-                return this.getTable(tables.WORDS_OF_POWER[Math.floor(Math.random() * tables.WORDS_OF_POWER.length)])
-            case "item":
-                return tables.EQUIPMENT
-        }
     }
 
     updateCustomSpecial(event, specialIndex, upgrade) {
@@ -122,6 +91,11 @@ class CharacterFeature extends React.Component {
                     <Button disabled={source.resource.max && source.resource.current >= source.resource.max} variant="light" onClick={() => this.updateResource(true, upgrade)}>+</Button>
                 </InputGroup.Append>
             </InputGroup>
+            {resource.refreshOn === "resupply" ? 
+                <Button variant="dark" onClick={() => this.updateResource(source.resource.max, upgrade)}>Resupply</Button>
+                :
+                <></>
+            }
         </>
     }
 
@@ -129,7 +103,9 @@ class CharacterFeature extends React.Component {
         const source = (upgrade ? this.props.feature.upgrade : this.props.feature);
         const setFunction = (upgrade ? this.setUpgrade : this.setField);
         let newCurrent = source.resource;
-        if (!source.resource.max && increment) {
+        if (typeof increment === "number") {
+            newCurrent.current = increment;
+        } else if (!source.resource.max && increment) {
             newCurrent.current++;
         } else if (increment && source.resource.max && source.resource.current < source.resource.max) {
             newCurrent.current++;
@@ -143,7 +119,7 @@ class CharacterFeature extends React.Component {
         const source = (upgrade ? this.props.feature.upgrade : this.props.feature);
         const setFunction = (upgrade ? this.setUpgrade : this.setField);
         let newSpecials = Object.assign(new Array(specials.length), source.specials);
-        const table = this.getTable(specialType);
+        const table = this.props.getTable(specialType);
         newSpecials[index] = table[Math.floor(Math.random() * table.length)];
         setFunction("specials", newSpecials);
     }
@@ -161,7 +137,7 @@ class CharacterFeature extends React.Component {
         if (value !== undefined) {
             newSpecials[specialIndex].specials[listIndex] = value;
         } else {
-            const table = this.getTable(source.currentSpecials[specialIndex].specialType);
+            const table = this.props.getTable(source.currentSpecials[specialIndex].specialType);
             newSpecials[specialIndex].specials[listIndex] = table[Math.floor(Math.random() * table.length)];
         }
         setFunction("currentSpecials", newSpecials);
@@ -177,7 +153,7 @@ class CharacterFeature extends React.Component {
         specials.forEach((special, i) => {
             let thisComp = [];
             thisComp.push(
-                <span className="grenze">{special.specialType}: </span>
+                <span className="grenze">{special}: </span>
             )
             if (source.specials[i]) {
                 thisComp.push(<>
@@ -223,7 +199,7 @@ class CharacterFeature extends React.Component {
     populateFavoriteSpecialOptions(specialType, number, upgrade, reroll) {
         let options = [];
         for (let i = 0; i < number; i++) {
-            const table = this.getTable(specialType);
+            const table = this.props.getTable(specialType);
             options.push(table[Math.floor(Math.random() * table.length)]);
         }
         let newState = Object.assign({}, this.state);
@@ -284,7 +260,7 @@ class CharacterFeature extends React.Component {
                                 newSpecials = tables.ALCHEMICAL_BASES;
                             } else {
                                 for (let i = 0; i < special.number; i++) {
-                                    const table = this.getTable(special.specialType);
+                                    const table = this.props.getTable(special.specialType);
                                     newSpecials.push(table[Math.floor(Math.random() * table.length)]);
                                 }
                             }
@@ -360,7 +336,7 @@ class CharacterFeature extends React.Component {
             refreshSpecials = Object.assign([], tables.ALCHEMICAL_BASES);
         } else {
             for (let i = 0; i < currentSpecials[specialIndex].number; i++) {
-                const table = this.getTable(currentSpecials[specialIndex].specialType);
+                const table = this.props.getTable(currentSpecials[specialIndex].specialType);
                 refreshSpecials.push(table[Math.floor(Math.random() * table.length)]);
             }
         }
@@ -437,6 +413,11 @@ class CharacterFeature extends React.Component {
                 <Accordion.Collapse eventKey={this.props.index + 1}>
                     <Card.Body>
                         {this.featureComp()}
+                        {this.props.feature.upgrade ? 
+                            <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.removeUpgrade}>Reroll Upgrade as New Feature</Button>
+                            :
+                            <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.rerollUpgrade}>Reroll Character Feature</Button>
+                        }
                     </Card.Body>
                 </Accordion.Collapse>
             </Card>

@@ -36,7 +36,7 @@ class FeatureSpecialAncestry extends CharacterFeature {
     }
 
     randomizeAncestries(index) {
-        const table = this.getTable("ancestry");
+        const table = this.props.getTable("ancestry");
         let newAncestries;
         if (index !== undefined) {
             newAncestries = Object.assign([], this.props.feature.ancestries);
@@ -102,7 +102,7 @@ class FeatureSpecialAncestry extends CharacterFeature {
 
     updateSpecial(specialType, index, specials, ancestryIndex) {
         let newSpecials = Object.assign(new Array(specials.length), this.props.feature.ancestries[ancestryIndex].specials);
-        const table = this.getTable(specialType);
+        const table = this.props.getTable(specialType);
         newSpecials[index] = table[Math.floor(Math.random() * table.length)];
         this.setField("specials", newSpecials, ancestryIndex);
     }
@@ -116,7 +116,7 @@ class FeatureSpecialAncestry extends CharacterFeature {
         specials.forEach((special, i) => {
             let thisComp = [];
             thisComp.push(
-                <span className="grenze">{special.specialType}: </span>
+                <span className="grenze">{special}: </span>
             )
             if (ancestry.specials[i]) {
                 thisComp.push(<>

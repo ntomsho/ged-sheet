@@ -129,8 +129,8 @@ class FeatureSkillMastery extends CharacterFeature {
 
     randomizeBeast() {
         const beastType = Math.floor(Math.random() * tables.BEAST_TYPES.length);
-        const table1 = this.getTable(tables.BEAST_TYPES[beastType][0]);
-        const table2 = this.getTable(tables.BEAST_TYPES[beastType][1]);
+        const table1 = this.props.getTable(tables.BEAST_TYPES[beastType][0]);
+        const table2 = this.props.getTable(tables.BEAST_TYPES[beastType][1]);
         let beastString = table1[Math.floor(Math.random() * table1.length)];
         if (beastType === 0) {
             beastString = beastString + " " + table2[Math.floor(Math.random() * table2.length)];

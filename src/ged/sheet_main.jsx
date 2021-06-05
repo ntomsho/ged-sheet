@@ -38,8 +38,8 @@ class CharSheet extends React.Component {
                     max: 7
                 },
                 armor: {
-                    current: 3,
-                    max: 3
+                    current: 0,
+                    max: 0
                 },
                 derpPoints: 1,
                 inventory: [],
@@ -92,18 +92,17 @@ class CharSheet extends React.Component {
 
     rest() {
         let newState = Object.assign({}, this.state);
-        if (newState.health.current < newState.health.max) {
-            newState.health.current++;
-        }
+        let healthRestore = 1;
+        //add something to get extra health restore from Aquatic, Plantimal, Fast Healer ancestries
         newState.features.forEach(feature => {
             if (feature === null) return;
             if (feature.resource && feature.resource.refreshOn === "rest") {
                 feature.resource.current = feature.resource.refreshAmt ? feature.resource.refreshAmt : feature.resource.max;
             }
-            if (feature.specialRefresh) {
-                feature.specialRefresh.forEach((special, i) => {
+            if (feature.currentSpecials) {
+                feature.currentSpecials.forEach((special) => {
                     if (special.refreshOn === "rest") {
-                        special = CharacterFeature.refreshSpecial(feature.specialRefresh, i, false, true);
+                        special.specials = this.returnRefreshedSpecials(special.specialType, special.specials.length);
                     }
                 })
             }
@@ -115,19 +114,67 @@ class CharSheet extends React.Component {
                 });
             }
         });
+        newState.health.current = (newState.health.current + healthRestore > newState.health.max ? newState.health.max : newState.health.current + healthRestore);
         this.saveState(newState);
+    }
+
+    calculateHealthAndArmor(newState) {
+        let noHealth = false;
+        let health = 6 + this.state.level;
+        let armor = 0;
+        newState.inventory.forEach(item => {
+            if (item.itemType === "Armor" && item.worn) {
+                armor = item.armor;
+            }
+        });
+        newState.features.forEach(feature => {
+            if (feature === null) return;
+            const sources = [feature, feature.dropdownChoice, feature.upgrade];
+            if (feature.ancestries) {
+                sources.shift();
+                feature.ancestries.forEach(ancestry => sources.push(tables.SPECIAL_ANCESTRY_INFO[ancestry.ancestry]))
+            }
+            if (feature.upgrade) sources.push(feature.upgrade.dropdownChoice);
+            sources.forEach(source => {
+                if (!source) return;
+                if (source.noHealth) noHealth = true;
+                if (source.maxHealth) health += source.maxHealth;
+                if (source.armor) armor += source.armor;
+            });
+        });
+        if (!newState.health) {
+            newState.health = { current: noHealth ? 0 : health, max: noHealth ? 0 : health };
+        } else {
+            newState.health.max = noHealth ? 0 : health;
+        }
+        if (!newState.armor) {
+            newState.armor = { current: armor, max: armor };
+        } else {
+            newState.armor.max = armor;
+        }
+        return newState;
+    }
+
+    returnRefreshedSpecials(specialType, num) {
+        let specials = [];
+        for (let i = 0; i < num; i++) {
+            const table = this.getTable(specialType);
+            specials.push(table[Math.floor(Math.random() * table.length)]);
+        }
+        return specials;
     }
 
     updateHealth(num) {
         let newState = Object.assign({}, this.state);
-        
-        if (newState.health.current <= this.state.health.current) {
+        if (num <= this.state.health.current) {
             if (newState.armor.current > 0) {
                 newState.health.current = num;
                 newState.armor.current = 0;
             } else {
                 newState.health.current = this.state.health.current === num ? num - 1 : num;
             }
+        } else {
+            newState.health.current = num;
         }
         this.saveState(newState);
     }
@@ -139,8 +186,6 @@ class CharSheet extends React.Component {
     }
 
     healthTrackerDisp() {
-        const totalCurrent = this.state.health.current + this.state.armor.current;
-        const totalMax = this.state.health.max + this.state.armor.max;
         const hearts = [
             <Col xs={3} md={2} lg={1} key={0}>
                 <Image
@@ -174,13 +219,13 @@ class CharSheet extends React.Component {
             hearts.push(
                 <Col xs={3} md={2} lg={1} key={i + 1}>
                     <Image
-                        id={`heart-${this.state.health.max + i + 1}`}
-                        key={this.state.health.max + i}
+                        id={`armor-${i + 1}`}
+                        key={i}
                         className="heart-container"
-                        alt={`${this.state.health.max + i + 1} Health`}
+                        alt={`${i + 1} Armor`}
                         fluid
                         onClick={() => this.updateArmor(i + 1)}
-                        src={this.state.health.current + this.state.armor.current >= this.state.health.max + i + 1 ?
+                        src={this.state.armor.current >= i + 1 ?
                             "https://icons.iconarchive.com/icons/icons8/ios7/256/Network-Shield-icon.png" :
                             "https://icons.iconarchive.com/icons/icons8/windows-8/256/Security-Shield-icon.png"}
                     />
@@ -188,10 +233,14 @@ class CharSheet extends React.Component {
             )
         }
         return (
+            <>
             <Row>
                 {hearts}
+            </Row>
+            <Row>
                 <Button className="mt-4 w-50" variant="success" size="lg" onClick={this.rest}>Rest</Button>
             </Row>
+            </>
         )
     }
 
@@ -225,13 +274,13 @@ class CharSheet extends React.Component {
         let newState = Object.assign({}, this.state);
         newState.features[index] = obj;
         if (reroll) newState.rerolls--;
-        this.saveState(newState);
+        this.saveState(this.calculateHealthAndArmor(newState));
     }
 
     updateInventory(newInv) {
         let newState = Object.assign({}, this.state);
         newState.inventory = newInv;
-        this.saveState(newState);
+        this.saveState(this.calculateHealthAndArmor(newState));
     }
 
     updateExperience(newExp) {
@@ -252,27 +301,22 @@ class CharSheet extends React.Component {
             if (this.state.features[i]) {
                 switch (this.state.features[i].feature) {
                     case "Fighting Style":
-                        features[i] = [<FeatureFightingStyle index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} updateFeature={this.updateFeature} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureFightingStyle index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollUpgrade={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Magic Artifact":
-                        features[i] = [<FeatureMagicArtifact index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} updateFeature={this.updateFeature} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureMagicArtifact index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollUpgrade={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Skill Mastery":
-                        features[i] = [<FeatureSkillMastery index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} updateFeature={this.updateFeature} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureSkillMastery index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollUpgrade={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Special Ancestry":
-                        features[i] = [<FeatureSpecialAncestry index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} updateFeature={this.updateFeature} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureSpecialAncestry index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollUpgrade={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Words of Power":
-                        features[i] = [<FeatureWordsOfPower index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} updateFeature={this.updateFeature} useReroll={this.useReroll} />]
-                }
-                if (this.state.features[i].upgrade) {
-                    features[i].push(<Button block className="random-button" key={i} disabled={this.state.rerolls <= 0 && this.state.features[i]} variant="outline-warning" onClick={() => this.removeUpgrade(i)}>Reroll Upgrade as New Feature</Button>)
-                } else {
-                    features[i].push(<Button block className="random-button" key={i} disabled={this.state.rerolls <= 0 && this.state.features[i]} variant="outline-warning" onClick={() => this.randomize("feature_" + i)}>Reroll Character Feature</Button>)
+                        features[i] = [<FeatureWordsOfPower index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollUpgrade={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                 }
             } else {
-                features[i] = <Button block className="random-button" key={i} disabled={this.state.rerolls <= 0 && this.state.features[i]} variant="outline-dark" onClick={() => this.randomize("feature_" + i)}>Roll Character Feature</Button>
+                features[i] = <Button block className="random-button" key={i} disabled={this.state.rerolls <= 0 && this.state.features[i]} getTable={this.getTable.bind(this)} variant="outline-dark" onClick={() => this.randomize("feature_" + i)}>Roll Character Feature</Button>
             }
         }
         return features;
@@ -329,6 +373,34 @@ class CharSheet extends React.Component {
             case "weapon":
                 const weaponType = tables.WEAPON_TYPES[Math.floor(Math.random() * tables.WEAPONS.length)]
                 return tables.WEAPONS[weaponType]
+            case "combatSkill": return tables.FIGHTING_SKILLS
+            case "artifactType": return tables.MAGIC_ARTIFACTS
+            case "Magic Garb": return tables.MAGIC_GARB
+            case "Magic Object": return tables.MAGIC_OBJECTS
+            case "Magic Weapon": return tables.MAGIC_WEAPONS
+            case "trainedSkill": return tables.CIVILIZED_SKILLS
+            case "skillMastery": return tables.SKILL_MASTERIES
+            case "ancestry": return tables.SPECIAL_ANCESTRIES
+            case "weapon":
+                return tables.WEAPONS[tables.WEAPON_TYPES[Math.floor(Math.random() * tables.WEAPON_TYPES.length)]]
+            case "Background": return tables.BACKGROUNDS
+            case "Blessing": return tables.BLESSINGS_OF_TUSHUZE
+            case "Element": return tables.ELEMENTS
+            case "Form": return tables.FORMS
+            case "Verb": return tables.VERBS
+            case "Animal":
+                return tables.ANIMALS[tables.ANIMAL_TYPES[Math.floor(Math.random() * tables.ANIMAL_TYPES.length)]]
+            case "Knowledge": return tables.KNOWLEDGES
+            case "Derp": return tables.DERPS
+            case "Song": return tables.SONGS
+            case "Rogue Trick": return tables.ROGUE_TRICKS
+            case "Ammo":
+            case "Rune":
+            case "Catalyst": return (Math.random() < 0.5 ? tables.ELEMENTS : tables.VERBS)
+            case "Word":
+                return this.getTable(tables.WORDS_OF_POWER[Math.floor(Math.random() * tables.WORDS_OF_POWER.length)])
+            case "item":
+                return tables.EQUIPMENT
         }
     }
 
@@ -336,8 +408,6 @@ class CharSheet extends React.Component {
         let newState = Object.assign({}, this.state);
         newState.level++;
         newState.experience = 0;
-        newState.health.max++;
-        newState.health.current++;
         newState.features.push(null);
         newState.rerolls++;
         this.saveState(newState);
@@ -396,6 +466,7 @@ class CharSheet extends React.Component {
                 </Row>
                 <Row xs={12} className="justify-content-center w-100">
                     <h2>Character Features</h2>
+                    <div className="grenze">Tap Features to expand</div>
                 </Row>
                 <Row>
                     <Accordion>

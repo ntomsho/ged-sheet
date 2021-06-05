@@ -104,40 +104,40 @@ export const SKILL_DESCRIPTIONS = {
 
 export const BACKGROUNDS = [
     "Accountant",
-    "Carpenter",
-    "Ditch digger",
     "Apothecary",
-    "Cheesemonger",
-    "Explorer",
     "Bandit",
-    "Cleric",
-    "Fisherman",
     "Blacksmith",
-    "Conman",
-    "Gambler",
     "Bureaucrat",
-    "Cult member",
-    "Glass blower",
     "Carnie",
+    "Carpenter",
+    "Cheesemonger",
+    "Cleric",
+    "Conman",
+    "Cult member",
     "Dirt farmer",
+    "Ditch digger",
+    "Explorer",
+    "Fisherman",
+    "Gambler",
+    "Glass blower",
     "Goatherd",
     "Hermit",
-    "Miner",
-    "Soldier",
     "Hobo",
-    "Musician",
-    "Stablehand",
     "Jeweler",
-    "Pirate (yarr)",
-    "Tailor",
     "Lawyer",
-    "Professional athlete",
-    "Thief",
-    "Mercenary",
     "Librarian",
-    "Trust fund baby",
+    "Mercenary",
     "Messenger",
+    "Miner",
+    "Musician",
+    "Pirate (yarr)",
+    "Professional athlete",
     "Servant",
+    "Soldier",
+    "Stablehand",
+    "Tailor",
+    "Thief",
+    "Trust fund baby",
     "Wizard’s apprentice"
 ];
 
@@ -259,8 +259,8 @@ export const CHARACTER_FEATURES = [
     "Fighting Style",
     "Magic Artifact",
     "Skill Mastery",
-    // "Special Ancestry",
-    // "Words of Power"
+    "Special Ancestry",
+    "Words of Power"
 ];
 
 export const FIGHTING_STYLE_BONUSES = {
@@ -354,20 +354,21 @@ export const MAGIC_ARTIFACT_INFO = {
     "Armor/Robe of Element": {
         description: "This garment or suit of armor is imbued with elemental energy that can be called forth into a protective aura around the wearer.",
         charge: 2,
+        canBeArmor: true,
         traits: [
             "Spend 1 Charge to surround yourself in a protective field of the artifact’s imbued element. It acts as a spell effect as though you’d cast a spell with the artifact’s imbued element as a Word of Power."
         ],
-        canBeArmor: true,
         specials: ["Element"],
         dropdown: {
             title: "Choose one of the following benefits.",
             options: [
                 {
                     option: "The artifact provides complete immunity to any damage that comes from the element it is imbued with.",
+                    artifactItem: {name: "Armor/Robe of Element"}
                 },
                 {
                     option: "The artifact provides +2 Armor.",
-                    armor: 2
+                    artifactItem: {name: "Armor/Robe of Element", armor: 2}
                 }
             ]
         }
@@ -435,6 +436,11 @@ export const MAGIC_ARTIFACT_INFO = {
             "Add a ranged or thrown weapon that uses the artifact’s ammunition type to your inventory.",
             "Whenever you rest while there is ammunition in the container, 5 pieces of it are enchanted. For each enchanted piece, roll a die. If it is even, the ammo is imbued with a random element. If it is odd, the ammo is imbued with a random verb. Any enchanted ammo not used by the time you next rest loses its magic."
         ],
+        specialRefresh: {
+            specialType: "Ammo",
+            number: 5,
+            refreshOn: "rest",
+        },
         dropdown: {
             title: "Choose which form this artifact takes. This determines which types of ammunition it can enchant.",
             options: [
@@ -1292,7 +1298,7 @@ export const EQUIPMENT = [
     "Lockpicks",
     "Long Stick",
     "Manacles",
-    "Mirror	",
+    "Mirror",
     "Musical Instrument",
     "Net",
     "Oil Flask",
@@ -1319,35 +1325,35 @@ export const WEAPON_TYPES = [
 export const WEAPONS = {
     "Heavy Melee": [
         "Battleaxe",
-        "Hatchet",
         "Beatstick",
-        "Longsword",
         "Broadsword",
-        "Mace",
         "Claymore",
-        "Spear",
         "Flail",
-        "Spiked Gauntlets",
         "Glaive",
+        "Hatchet",
+        "Longsword",
+        "Mace",
+        "Spear",
+        "Spiked Gauntlets",
         "Warhammer"
     ],
     "Light Melee": [
         "Dagger",
+        "Quarterstaff",
         "Rapier",
         "Scimitar",
         "Shortsword",
-        "Quarterstaff",
         "Whip"
     ],
     "Ranged": [
         "Blunderbuss",
-        "Flintlock Pistol",
-        "Longbow",
         "Composite Bow",
-        "Hand Crossbow",
-        "Musket",
         "Crossbow",
+        "Flintlock Pistol",
+        "Hand Crossbow",
         "Hunting Bow",
+        "Longbow",
+        "Musket",
         "Sling"
     ],
     "Thrown": [
@@ -1398,34 +1404,34 @@ export const ALL_WEAPONS = [
 
 export const MUSICAL_INSTRUMENTS = [
     "Accordion",
-    "Fiddle",
-    "Ocarina",
     "Bagpipes",
-    "Flute",
-    "Portable Theremin",
     "Banjo",
-    "Harmonica",
-    "Sitar",
     "Bass Lute",
-    "Harp",
-    "Tambourine",
     "Cowbell",
-    "Lute	",
-    "Trumpet",
     "Drum",
+    "Fiddle",
+    "Flute",
+    "Harmonica",
+    "Harp",
+    "Lute	",
     "Mandolin",
+    "Ocarina",
+    "Portable Theremin",
+    "Sitar",
+    "Tambourine",
+    "Trumpet",
     "Tuba"
 ];
 
 export const TRAPS = [
     "Beartrap",
-    "Deadfall",
-    "Poison Trap",
     "Cage Trap",
-    "Net Trap",
-    "Snare",
     "Crossbow Trap",
+    "Deadfall",
+    "Net Trap",
     "Pit Trap",
+    "Poison Trap",
+    "Snare",
     "Spike Trap"
 ];
 
