@@ -245,7 +245,7 @@ export const DERPS = [
     "Thinks they’re in an RPG",
     "Wannabe bard",
     "Sovereign Citizen",
-    "*Tips fedora* M’lady",
+    "(Tips fedora) M’lady",
     "Wanted",
     "Stone-age luddite",
     "Too old for this shit",
@@ -324,7 +324,7 @@ export const MAGIC_ARTIFACT_INFO = {
             "While wearing this amulet, you gain 1 point of Armor in addition to any Armor you have from other sources. When depleted, the Armor regenerates after 30 minutes without taking any damage.",
             "You have Magic Advantage on defense rolls against all physical threats."
         ],
-        armor: 1
+        item: { name: "Amulet of Protection", armor: 1, itemType: "Artifact" }
     },
     "Gauntlets of Ogre Strength": {
         description: "These gauntlets are imbued with the strength and destructive tendencies of the swamp-dwelling and franchise-friendly ogre.",
@@ -338,6 +338,7 @@ export const MAGIC_ARTIFACT_INFO = {
         traits: [
             "In addition to the lens color effect, the lenses highlight magical effects and the residue of repeated spellcasting in an area. You gain Magic Advantage on rolls to identify what kind of magic was used."
         ],
+        //To-do
         random: {
             title: "Lens color",
             description: "When you take this feature, roll 1d6 to determine the color of the lenses and what their secondary benefit is.",
@@ -354,7 +355,6 @@ export const MAGIC_ARTIFACT_INFO = {
     "Armor/Robe of Element": {
         description: "This garment or suit of armor is imbued with elemental energy that can be called forth into a protective aura around the wearer.",
         charge: 2,
-        canBeArmor: true,
         traits: [
             "Spend 1 Charge to surround yourself in a protective field of the artifact’s imbued element. It acts as a spell effect as though you’d cast a spell with the artifact’s imbued element as a Word of Power."
         ],
@@ -363,12 +363,20 @@ export const MAGIC_ARTIFACT_INFO = {
             title: "Choose one of the following benefits.",
             options: [
                 {
-                    option: "The artifact provides complete immunity to any damage that comes from the element it is imbued with.",
-                    artifactItem: {name: "Armor/Robe of Element"}
+                    option: "The artifact provides complete immunity to any damage that comes from the element it is imbued with. (Robe - 0 Armor)",
+                    item: { name: "Robe of Element", armor: 0, itemType: "Artifact" }
                 },
                 {
-                    option: "The artifact provides +2 Armor.",
-                    artifactItem: {name: "Armor/Robe of Element", armor: 2}
+                    option: "The artifact provides complete immunity to any damage that comes from the element it is imbued with. (Armor - 3 Armor)",
+                    item: { name: "Armor of Element", armor: 3, itemType: "Artifact" }
+                },
+                {
+                    option: "The artifact provides +2 Armor. (Robe - 2 Armor)",
+                    item: { name: "Armor of Element", armor: 2, itemType: "Artifact"}
+                },
+                {
+                    option: "The artifact provides +2 Armor. (Armor - 5 Armor)",
+                    item: { name: "Armor of Element", armor: 5, itemType: "Artifact" }
                 }
             ]
         }
@@ -436,11 +444,11 @@ export const MAGIC_ARTIFACT_INFO = {
             "Add a ranged or thrown weapon that uses the artifact’s ammunition type to your inventory.",
             "Whenever you rest while there is ammunition in the container, 5 pieces of it are enchanted. For each enchanted piece, roll a die. If it is even, the ammo is imbued with a random element. If it is odd, the ammo is imbued with a random verb. Any enchanted ammo not used by the time you next rest loses its magic."
         ],
-        specialRefresh: {
+        specialRefresh: [{
             specialType: "Ammo",
             number: 5,
             refreshOn: "rest",
-        },
+        }],
         dropdown: {
             title: "Choose which form this artifact takes. This determines which types of ammunition it can enchant.",
             options: [
@@ -776,11 +784,11 @@ export const SKILL_MASTERIES = {
                 options: [
                     {
                         option: "Heavy armor",
-                        item: "Heavy armor"
+                        item: {name: "Heavy Armor", itemType: "Armor", armor: 5}
                     },
                     {
                         option: "Superheavy armor",
-                        item: "Superheavy armor"
+                        item: {name: "Superheavy Armor", itemType: "Armor", armor: 7}
                     }
                 ]
             },
@@ -815,6 +823,7 @@ export const SKILL_MASTERIES = {
                     refreshOn: "resupply"
                 }
             ],
+            item: {name: "Bag of Tricks", itemType: "Equipment"},
             upgrade: {
                 upgradeText: "If you take this feature again, you can have up to 7 rogue tricks at once and, once per session, you can retroactively declare (with the Director’s approval) that you stole something earlier.",
                 specialRefresh: [
@@ -870,7 +879,7 @@ export const SKILL_MASTERIES = {
                 "Traps with an elemental upgrade gain Magic Advantage on their attack rolls and deal enhanced damage against targets that are vulnerable to that element.",
                 "Once per session, you can declare (with the Director’s approval) that you already placed one of your traps somewhere earlier."
             ],
-            item: "Trapmaker's Tools",
+            item: {name: "Trapmaker's Tools", itemType: "Equipment"},
             specialRefresh: [
                 {
                     specialType: "Trap",
@@ -906,7 +915,7 @@ export const SKILL_MASTERIES = {
                 "Add a Mobile Alchemy Lab to your inventory that allows you to make alchemical concoctions on the go. You can resupply it wherever alchemical supplies are available. Whenever you resupply the Mobile Alchemy Lab, you stock it with one of each type of alchemical base (no need to roll) and 3 alchemical catalysts. For each catalyst, roll a die--if it is even, it is a randomly rolled element, if it is odd, it is a randomly rolled verb. As an action, you can expend a base and a catalyst to create a concoction that acts as a spell with an appropriate magical effect when used. Unused catalysts lose potency after 24 hours.\n-Creating a concoction in the heat of battle requires a roll to do so safely or, if the spell effect requires a roll, you can take +1 Difficulty on that roll instead.",
                 "With a successful roll, you can extract additional catalysts from plants, minerals, or other substances you find with magical properties or residue, but you can’t create more bases to combine them with without resupplying."
             ],
-            item: "Mobile Alchemy Lab",
+            item: {name: "Mobile Alchemy Lab", itemType: "Equipment"},
             specialRefresh: [
                 {
                     specialType: "Base",
@@ -1270,7 +1279,7 @@ export const WORDS_OF_POWER = [
 ];
 
 export const BEAST_TYPES = [
-    ["Element", "Animal"],
+    ["Element Adjective", "Animal"],
     ["Animal", "Animal"]
 ]
 
@@ -1722,6 +1731,45 @@ export const ELEMENTS = [
     "Sound",
     "Wind"
 ];
+
+export const ELEMENT_ADJECTIVES = {
+    "Acid": "Acidic",
+    "Earth": "Terran",
+    "Frost": "Frosted",
+    "Bee": "Apian",
+    "Electricity": "Electric",
+    "Heat": "Thermal",
+    "Bone": "Bone",
+    "Fear": "Fearsome",
+    "Ice": "Icy",
+    "Cold": "Chilling",
+    "Fire": "Fiery",
+    "Life": "Life-giving",
+    "Crystal": "Crystalline",
+    "Flame": "Flaming",
+    "Light": "Luminous",
+    "Death": "Entropic",
+    "Force": "Kinetic",
+    "Lightning": "Storming",
+    "Madness": "Eldritch",
+    "Poison": "Poisonous",
+    "Stink": "Stinking",
+    "Magma": "Volcanic",
+    "Rat": "Rodentine",
+    "Stone": "Stone",
+    "Meat": "Meat",
+    "Shadow": "Shadowy",
+    "Thunder": "Thundering",
+    "Metal": "Metallic",
+    "Smoke": "Smoky",
+    "Time": "Temporal",
+    "Mind": "Psychic",
+    "Sparkles": "Sparkling",
+    "Water": "Aquatic",
+    "Plant": "Botanical",
+    "Sound": "Sonic",
+    "Wind": "Tempestuous"
+}
 
 export const FORMS = [
     "Armor",

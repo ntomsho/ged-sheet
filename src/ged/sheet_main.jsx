@@ -42,7 +42,7 @@ class CharSheet extends React.Component {
                     max: 0
                 },
                 derpPoints: 1,
-                inventory: [],
+                inventory: null,
                 conditions: [],
                 dead: false
             }
@@ -102,7 +102,7 @@ class CharSheet extends React.Component {
             if (feature.currentSpecials) {
                 feature.currentSpecials.forEach((special) => {
                     if (special.refreshOn === "rest") {
-                        special.specials = this.returnRefreshedSpecials(special.specialType, special.specials.length);
+                        special.specials = this.returnRefreshedSpecials(special.specialType, special.specials.length, special.favoriteSpecial);
                     }
                 })
             }
@@ -122,11 +122,13 @@ class CharSheet extends React.Component {
         let noHealth = false;
         let health = 6 + this.state.level;
         let armor = 0;
-        newState.inventory.forEach(item => {
-            if (item.itemType === "Armor" && item.worn) {
-                armor = item.armor;
-            }
-        });
+        if (newState.inventory) {
+            newState.inventory.forEach(item => {
+                if (item.armor && item.worn) {
+                    armor = item.armor;
+                }
+            });
+        }
         newState.features.forEach(feature => {
             if (feature === null) return;
             const sources = [feature, feature.dropdownChoice, feature.upgrade];
@@ -155,9 +157,10 @@ class CharSheet extends React.Component {
         return newState;
     }
 
-    returnRefreshedSpecials(specialType, num) {
+    returnRefreshedSpecials(specialType, num, favorite) {
         let specials = [];
-        for (let i = 0; i < num; i++) {
+        if (favorite) specials.push(favorite);
+        for (let i = 0; i < num + (favorite ? -1 : 0); i++) {
             const table = this.getTable(specialType);
             specials.push(table[Math.floor(Math.random() * table.length)]);
         }
@@ -252,6 +255,7 @@ class CharSheet extends React.Component {
     }
 
     plotPointsTrackerDisp() {
+        //calculateDerpPoints()
         const pp = [];
         for (let i = 0; i < 3; i++) {
             pp.push(
@@ -274,7 +278,14 @@ class CharSheet extends React.Component {
         let newState = Object.assign({}, this.state);
         newState.features[index] = obj;
         if (reroll) newState.rerolls--;
+        this.checkItemReqs(newState);
         this.saveState(this.calculateHealthAndArmor(newState));
+    }
+
+    checkItemReqs(newState) {
+        if (newState.inventory) {
+            newState.inventory = newState.inventory.filter(item => !item.featureReq || newState.features.map(feature => feature.artifact).includes(item.featureReq));
+        }
     }
 
     updateInventory(newInv) {
@@ -301,19 +312,19 @@ class CharSheet extends React.Component {
             if (this.state.features[i]) {
                 switch (this.state.features[i].feature) {
                     case "Fighting Style":
-                        features[i] = [<FeatureFightingStyle index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollUpgrade={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureFightingStyle index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Magic Artifact":
-                        features[i] = [<FeatureMagicArtifact index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollUpgrade={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureMagicArtifact index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Skill Mastery":
-                        features[i] = [<FeatureSkillMastery index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollUpgrade={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureSkillMastery index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Special Ancestry":
-                        features[i] = [<FeatureSpecialAncestry index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollUpgrade={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureSpecialAncestry index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Words of Power":
-                        features[i] = [<FeatureWordsOfPower index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollUpgrade={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureWordsOfPower index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                 }
             } else {
                 features[i] = <Button block className="random-button" key={i} disabled={this.state.rerolls <= 0 && this.state.features[i]} getTable={this.getTable.bind(this)} variant="outline-dark" onClick={() => this.randomize("feature_" + i)}>Roll Character Feature</Button>
@@ -342,6 +353,7 @@ class CharSheet extends React.Component {
                 }
             }
             newState.features[featureIndex] = newFeature;
+            this.checkItemReqs(newState);
         } else {
             newState[field] = table[Math.floor(Math.random() * table.length)];
             if (this.state[field]) {
@@ -371,7 +383,7 @@ class CharSheet extends React.Component {
             case "feature_1": return tables.CHARACTER_FEATURES
             case "bonusSkill": return tables.CIVILIZED_SKILLS
             case "weapon":
-                const weaponType = tables.WEAPON_TYPES[Math.floor(Math.random() * tables.WEAPONS.length)]
+                const weaponType = tables.WEAPON_TYPES[Math.floor(Math.random() * tables.WEAPON_TYPES.length)]
                 return tables.WEAPONS[weaponType]
             case "combatSkill": return tables.FIGHTING_SKILLS
             case "artifactType": return tables.MAGIC_ARTIFACTS
@@ -386,6 +398,7 @@ class CharSheet extends React.Component {
             case "Background": return tables.BACKGROUNDS
             case "Blessing": return tables.BLESSINGS_OF_TUSHUZE
             case "Element": return tables.ELEMENTS
+            case "Element Adjective": return tables.ELEMENT_ADJECTIVES
             case "Form": return tables.FORMS
             case "Verb": return tables.VERBS
             case "Animal":
@@ -468,7 +481,7 @@ class CharSheet extends React.Component {
                     <h2>Character Features</h2>
                     <div className="grenze">Tap Features to expand</div>
                 </Row>
-                <Row>
+                <Row className="mb-5">
                     <Accordion>
                         {this.populateFeatures()}
                     </Accordion>

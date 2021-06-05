@@ -32,10 +32,18 @@ class Inventory extends React.Component {
     }
 
     isReady() {
-        if (this.props.features.some(feature => feature === null)) return false;
-        if (this.props.features.some(feature => feature.feature === "Magic Artifact" && !feature.artifact)) return false;
-        if (this.props.features.some(feature => feature.feature === "Skill Mastery" && !feature.mastery)) return false;
-        return true;
+        if (this.props.inventory) return true;
+        let readyFeatures = 0;
+        this.props.features.forEach(feature => {
+            if (feature === null) return;
+            if (feature.feature === "Magic Artifact" && !feature.artifact) return;
+            if (feature.feature === "Skill Mastery" && !feature.mastery) return;
+            readyFeatures++;
+        })
+        // if (this.props.features.some(feature => feature === null)) return false;
+        // if (this.props.features.some(feature => feature.feature === "Magic Artifact" && !feature.artifact)) return false;
+        // if (this.props.features.some(feature => feature.feature === "Skill Mastery" && !feature.mastery)) return false;
+        return readyFeatures >= 2 ? true : false;
     }
 
     showStartingEquipment() {
@@ -85,6 +93,14 @@ class Inventory extends React.Component {
                     [{ name: "Armor", worn: false, itemType: "Armor" }, { name: "Shield", itemType: "Equipment" }, { title: "Light Melee Weapon", table: tables.WEAPONS["Light Melee"], itemType: "Light Melee Weapon" }, { name: "Spare ammunition", itemType: "Equipment"}]
                 ]
             case "Magic Artifact":
+                let artifact;
+                if (feature.item) artifact = feature.item;
+                if (feature.upgrade && feature.upgrade.item) artifact = feature.upgrade;
+                if (feature.dropdownChoice && feature.dropdownChoice.item) artifact = feature.dropdownChoice.item;
+                if (artifact) {
+                    artifact.featureReq = feature.artifact;
+                    return [[artifact]]
+                }
                 return [[{ name: feature.artifact, itemType: "Artifact", featureReq: feature.artifact}]]
             case "Skill Mastery":
                 if (feature.trainedSkill === "Believe in Yourself") return [
@@ -137,7 +153,9 @@ class Inventory extends React.Component {
         })}
         {this.state.startingEquipmentChoicesMade.every(choice => choice !== null) ?
         <Row>
-            <Button variant="primary" onClick={this.acceptStartingEquipment}>Accept</Button>
+            <Col className="justify-content-center" style={{ display: "flex" }}>
+                <Button block variant="primary" onClick={this.acceptStartingEquipment}>Accept</Button>
+            </Col>
         </Row> :
         <div></div>}
         </>
@@ -147,7 +165,7 @@ class Inventory extends React.Component {
         let newInv = [];
         this.state.startingEquipmentChoicesMade.forEach((choice, i) => {
             const item = this.state.startingEquipmentChoices[i][choice]
-            newInv.push({name: item.name, worn: item.worn, itemType: item.itemType});
+            newInv.push(item);
         });
         this.props.updateInventory(newInv);
     }
@@ -208,7 +226,7 @@ class Inventory extends React.Component {
     itemComp(item, itemIndex) {
         let comps = [];
 
-        if (item.itemType === "Armor") {
+        if (item.itemType === "Armor" || item.armor) {
             let armorLevels = [];
             for (let i = 1; i <= 7; i++) {
                 armorLevels.push(<Dropdown.Item onClick={() => this.changeItem("armor", i, itemIndex)}>{i}</Dropdown.Item>);
@@ -327,45 +345,33 @@ class Inventory extends React.Component {
 
     inventoryComp() {
         return (
-        <Accordion>
-        <ShopModal closeModal={this.openShop} purchase={this.purchase.bind(this)} getImage={this.getImage.bind(this)} shopModal={this.state.shopModal}/>
-        <Card>
-            <Card.Header>
-                <Accordion.Toggle as={Button} variant="light" className="w-100 grenze" eventKey="inv">
-                    <h3>Inventory</h3>
-                    <div className="grenze">Tap to expand</div>
-                </Accordion.Toggle>
-            </Card.Header>
-            <Accordion.Collapse eventKey="inv">
-                <Card.Body>
-                    <Row xs={2} sm={3} m={4} lg={5} className="g-1">
-                        {this.props.inventory.map((item, i) => {
-                        return (
-                            this.itemComp(item, i)
-                        )})}
-                    </Row>
-                    <Form className="mt-4">
-                        <Dropdown>
-                            <Dropdown.Toggle>Add Item</Dropdown.Toggle>
-                            <Dropdown.Menu>
-                                <Dropdown.Item as="button" variant="outline-light" onClick={() => this.addItem("Standard")}>Add Standard Item</Dropdown.Item>
-                                <Dropdown.Item as="button" variant="outline-secondary" onClick={() => this.addItem("Armor")}>Add Armor</Dropdown.Item>
-                                <Dropdown.Item as="button" variant="outline-success" onClick={() => this.addItem("Cash Money")}>Add Cash Money</Dropdown.Item>
-                                <Dropdown.Item as="button" variant="outline-info" onClick={() => this.addItem("Magic Item")}>Add Magic Item</Dropdown.Item>
-                                <Dropdown.Item as="button" variant="outline-warning" onClick={() => this.addItem("Treasure")}>Add Treasure</Dropdown.Item>
-                                <Dropdown.Item as="button" variant="outline-light" onClick={() => this.addItem("Trinket")}>Add Trinket</Dropdown.Item>
-                                <Dropdown.Item as="button" variant="outline-light" onClick={() => this.addItem("Weapon")}>Add Weapon</Dropdown.Item>
-                            </Dropdown.Menu>
-                        </Dropdown>
-                    </Form>
-                    {this.props.inventory.filter(item => item.itemType === "Cash Money").length > 0 ?
-                    <Button variant="outline-success" onClick={this.openShop}>Equipment Store</Button>
-                    :
-                    null}
-                </Card.Body>
-            </Accordion.Collapse>
-        </Card>
-        </Accordion>)
+            <Card.Body>
+                <Row xs={2} sm={3} m={4} lg={5} className="g-1">
+                    {this.props.inventory.map((item, i) => {
+                    return (
+                        this.itemComp(item, i)
+                    )})}
+                </Row>
+                <Form className="mt-4">
+                    <Dropdown>
+                        <Dropdown.Toggle>Add Item</Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            <Dropdown.Item as="button" variant="outline-light" onClick={() => this.addItem("Standard")}>Add Standard Item</Dropdown.Item>
+                            <Dropdown.Item as="button" variant="outline-secondary" onClick={() => this.addItem("Armor")}>Add Armor</Dropdown.Item>
+                            <Dropdown.Item as="button" variant="outline-success" onClick={() => this.addItem("Cash Money")}>Add Cash Money</Dropdown.Item>
+                            <Dropdown.Item as="button" variant="outline-info" onClick={() => this.addItem("Magic Item")}>Add Magic Item</Dropdown.Item>
+                            <Dropdown.Item as="button" variant="outline-warning" onClick={() => this.addItem("Treasure")}>Add Treasure</Dropdown.Item>
+                            <Dropdown.Item as="button" variant="outline-light" onClick={() => this.addItem("Trinket")}>Add Trinket</Dropdown.Item>
+                            <Dropdown.Item as="button" variant="outline-light" onClick={() => this.addItem("Weapon")}>Add Weapon</Dropdown.Item>
+                        </Dropdown.Menu>
+                    </Dropdown>
+                </Form>
+                {this.props.inventory.filter(item => item.itemType === "Cash Money").length > 0 ?
+                <Button variant="outline-success" onClick={this.openShop}>Equipment Store</Button>
+                :
+                null}
+            </Card.Body>
+        )
     }
 
     openShop() {
@@ -375,19 +381,36 @@ class Inventory extends React.Component {
     }
 
     render() {
-        if (!this.isReady()) return <div></div>
-        if (this.props.inventory.length === 0) {
-            if (this.state.startingEquipmentChoices) {
-                return (<>
+        let comp;
+        if (!this.props.inventory) {
+            if (this.isReady()) {
+                if (this.state.startingEquipmentChoices) {
+                    comp = (<>
                     <h3>Choose Starting Equipment</h3>
                     {this.startingEquipmentComp()}
                 </>)
-            } else {
-                return <Button variant="dark-outline" size="lg" onClick={this.showStartingEquipment}>Select Starting Equipment</Button>
+                } else {
+                    comp = <Row><Col className="justify-content-center" style={{ display: "flex" }}><Button className="mt-3 mb-3" variant="dark" block onClick={this.showStartingEquipment}>Select Starting Equipment</Button></Col></Row>
+                }
             }
         } else {
-            return this.inventoryComp();
+            comp = this.inventoryComp();
         }
+
+        return <Accordion>
+            <ShopModal closeModal={this.openShop} purchase={this.purchase.bind(this)} getImage={this.getImage.bind(this)} shopModal={this.state.shopModal} />
+            <Card>
+                <Card.Header>
+                    <Accordion.Toggle as={Button} variant="light" className="w-100 grenze" eventKey="inv">
+                        <h2>Inventory</h2>
+                        <div className="grenze">{this.props.inventory ? "Tap to expand" : this.isReady() ? "Choose starting inventory" : "Complete Character Features to choose starting inventory"}</div>
+                    </Accordion.Toggle>
+                </Card.Header>
+                <Accordion.Collapse eventKey="inv">
+                    {comp || <></>}
+                </Accordion.Collapse>
+            </Card>
+        </Accordion>
     }
 }
 

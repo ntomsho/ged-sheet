@@ -416,7 +416,7 @@ class CharacterFeature extends React.Component {
                         {this.props.feature.upgrade ? 
                             <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.removeUpgrade}>Reroll Upgrade as New Feature</Button>
                             :
-                            <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.rerollUpgrade}>Reroll Character Feature</Button>
+                            <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.rerollFeature}>Reroll Character Feature</Button>
                         }
                     </Card.Body>
                 </Accordion.Collapse>
