@@ -341,6 +341,9 @@ class Inventory extends React.Component {
         newInv.splice(newInv.indexOf(cash), 1);
         newInv = newInv.concat(items);
         this.props.updateInventory(newInv);
+        let newState = Object.assign({}, this.state);
+        newState.shopModal = false;
+        this.setState(newState);
     }
 
     inventoryComp() {

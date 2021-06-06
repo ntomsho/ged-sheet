@@ -435,6 +435,9 @@ class CharSheet extends React.Component {
                 <Row className="justify-content-center">
                     <h1 className="text-center ged-color">Guild of Expendable Dungeoneers</h1>
                 </Row>
+                <Row>
+                    <div>This sheet saves your character state in the URL. To save your character, copy or bookmark the URL and come back to it to pick up where you left off.</div>
+                </Row>
                 <Row className="justify-content-center">
                     {this.rerollTracker()}
                 </Row>
