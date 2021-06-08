@@ -1,5 +1,6 @@
 import React from 'react';
 import * as tables from './ged-tables';
+import SkillModal from './skill_modal';
 import believeImg from '../images/believe-in-yourself.png';
 import bruteImg from '../images/brute-force.png';
 import cardioImg from '../images/cardio.png';
@@ -15,6 +16,14 @@ import Button from 'react-bootstrap/Button';
 import { Accordion, Dropdown, Card } from 'react-bootstrap';
 
 class Skills extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            modalDisplaySkill: null,
+            displaySkillTrained: null
+        }
+    }
 
     checkTrained(skill) {
         if (this.props.bonusSkill === skill) return true;
@@ -41,17 +50,27 @@ class Skills extends React.Component {
         }
     }
 
+    toggleModal(displaySkill) {
+        let newState = Object.assign({}, this.state);
+        newState.modalDisplaySkill = displaySkill;
+        newState.displaySkillTrained = displaySkill ? this.checkTrained(displaySkill) : null;
+        this.setState(newState);
+    }
+
     skillBox(skill, index) {
         let variant = (tables.CIVILIZED_SKILLS.includes(skill) ? "info" : "danger");
         let trained = this.checkTrained(skill);
         return (
-            <Col xs={4}>
+            <Col xs={4} key={index}>
                 <Card bg={trained ? variant : ""} border={trained ? "" : variant}>
                 <Card.Img src={this.getImage(skill)} alt="Card Image" />
-                <Card.ImgOverlay>
-                <Card.Body>
-                <Dropdown>
-                    <Dropdown.Toggle className="w-100" key={index} variant={trained ? "dark" : "outline-dark"}>
+                <Card.ImgOverlay style={{padding: 0, zIndex: 0}}>
+                <Card.Body className="skill-box">
+                    <Button className="w-100" onClick={() => this.toggleModal(skill)} variant={trained ? "dark" : "outline-dark"}>
+                        <div className="grenze"><strong>{skill}</strong></div>
+                    </Button>
+                {/* <Dropdown>
+                    <Dropdown.Toggle style={{border: "none", whiteSpace: "normal"}} className="w-100" key={index} variant={trained ? "dark" : "outline-dark"}>
                         <div className="grenze"><strong>{skill}</strong></div>
                         <Dropdown.Menu>
                             <Dropdown.Item>{tables.SKILL_DESCRIPTIONS[skill].covers}</Dropdown.Item>
@@ -69,7 +88,7 @@ class Skills extends React.Component {
                             </ul>
                         </Dropdown.Menu>
                     </Dropdown.Toggle>
-                </Dropdown>
+                </Dropdown> */}
                 </Card.Body>
                 </Card.ImgOverlay>
                 </Card>
@@ -80,6 +99,7 @@ class Skills extends React.Component {
     render() {
         return (
             <Accordion>
+                <SkillModal displaySkill={this.state.modalDisplaySkill} trained={this.state.displaySkillTrained} toggleModal={this.toggleModal.bind(this)} />
                 <Card>
                     <Card.Header>
                         <Accordion.Toggle as={Button} variant="light" className="w-100 grenze" eventKey="skills">
@@ -88,7 +108,7 @@ class Skills extends React.Component {
                         </Accordion.Toggle>
                     </Card.Header>
                     <Accordion.Collapse eventKey="skills">
-                        <div>
+                        <div style={{position: "relative", zIndex: 5}}>
                         <Row className="mt-2">
                             {tables.FIGHTING_SKILLS.map((skill, i) => {
                                 return this.skillBox(skill)

@@ -101,6 +101,13 @@ h1, h2, h3 {
     width: 100%;
 }
 
+.skill-box {
+  position: relative;
+  top: 50%;
+  width: 100%;
+  transform: translateY(-50%);
+}
+
 /* Custom Bootstrap */
 
 a {
