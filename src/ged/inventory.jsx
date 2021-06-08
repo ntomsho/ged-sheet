@@ -113,7 +113,7 @@ class Inventory extends React.Component {
                     [{ name: "Lockpicks", itemType: "Equipment" }, { name: "Disguise kit", itemType: "Equipment" }, { title: "Light Melee Weapon", table: tables.WEAPONS["Light Melee"], itemType: "Light Melee Weapon" }]
                 ]
                 if (feature.trainedSkill === "Macgyver") return [
-                    [{ name: "Smith's tools", itemType: "Equipment" }, { name: "Hammer and chisel", itemType: "Equipment" }, { name: "Carpenter's tools", itemType: "Equipment" }, { name: "Apothecary's tools", itemType: "Equipment"}],
+                    [{ name: "Smith\'s tools", itemType: "Equipment" }, { name: "Hammer and chisel", itemType: "Equipment" }, { name: "Carpenter\'s tools", itemType: "Equipment" }, { name: "Apothecary\'s tools", itemType: "Equipment"}],
                     [{ name: "Oil flask", itemType: "Equipment" }, { name: "Glue", itemType: "Equipment" }, { name: "Vial of acid", itemType: "Equipment"}]
                 ]
                 if (feature.trainedSkill === "Man vs. Wild") return [
@@ -123,12 +123,12 @@ class Inventory extends React.Component {
                 if (feature.trainedSkill === "Thinkiness") return [[{name: "Cash money", itemType: "Cash Money"}]];
             case "Special Ancestry":
                 return [
-                    [{ title: "Your people's favored weapon", table: tables.ALL_WEAPONS, itemType: "Weapon" }, { title: "Background tools for your people's favored profession", table: tables.BACKGROUNDS.map(bg => `${bg}'s tools`), itemType: "Equipment" }, { title: "A good luck trinket that reminds you of home", derpStored: true, table: tables.TRINKETS.map(trinket => `Good Luck ${trinket}`), itemType: "Trinket"}]
+                    [{ title: "Your people's favored weapon", table: tables.ALL_WEAPONS, itemType: "Weapon" }, { title: "Background tools for your people's favored profession", table: tables.BACKGROUNDS.map(bg => `${bg}\'s tools`), itemType: "Equipment" }, { title: "A good luck trinket that reminds you of home", derpStored: true, table: tables.TRINKETS.map(trinket => `Good Luck ${trinket}`), itemType: "Trinket"}]
                 ]
             case "Words of Power":
                 return [
                     [{ name: "Staff", itemType: "Light Melee Weapon" }, { name: "Dagger", itemType: "Light Melee Weapon" }, { name: "Sling", itemType: "Ranged Weapon"}],
-                    [{ name: "Librarian's tools", itemType: "Equipment" }, { name: "Apothecary's tools", itemType: "Equipment"}]
+                    [{ name: "Librarian\'s tools", itemType: "Equipment" }, { name: "Apothecary\'s tools", itemType: "Equipment"}]
                 ]
         }
     }
