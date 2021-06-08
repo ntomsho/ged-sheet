@@ -62,12 +62,12 @@ class Skills extends React.Component {
         let trained = this.checkTrained(skill);
         return (
             <Col xs={4} key={index}>
-                <Card bg={trained ? variant : ""} border={trained ? "" : variant}>
+                <Card bg={trained ? variant : ""} border={trained ? "" : variant} onClick={() => this.toggleModal(skill)}>
                 <Card.Img src={this.getImage(skill)} alt="Card Image" />
                 <Card.ImgOverlay style={{padding: 0, zIndex: 0}}>
-                <Card.Body className="skill-box">
-                    <Button className="w-100" onClick={() => this.toggleModal(skill)} variant={trained ? "dark" : "outline-dark"}>
-                        <div className="grenze"><strong>{skill}</strong></div>
+                <Card.Body className="skill-box" style={{padding: "1rem 0.5rem"}}>
+                    <Button className="w-100" variant={trained ? "dark" : "outline-dark"}>
+                        <div className="grenze" style={{fontSize: "2.75vw"}}><strong>{skill}</strong></div>
                     </Button>
                 {/* <Dropdown>
                     <Dropdown.Toggle style={{border: "none", whiteSpace: "normal"}} className="w-100" key={index} variant={trained ? "dark" : "outline-dark"}>

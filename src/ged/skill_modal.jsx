@@ -8,7 +8,7 @@ const SkillModal = (props) => {
         if (!props.displaySkill) return <></>
         else return (
             <Modal onClick={() => props.toggleModal(null)} show={!!props.displaySkill} size="sm" onHide={props.toggleModal}>
-                <Modal.Header>
+                <Modal.Header style={{justifyContent: "center"}}>
                     <h2>{props.displaySkill}</h2>
                 </Modal.Header>
                 <Modal.Body>
