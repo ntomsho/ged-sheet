@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import * as tables from './ged-tables';
 import Modal from 'react-bootstrap/Modal';
-import { Card, Dropdown, Row, Col, Button } from 'react-bootstrap';
 
 const SkillModal = (props) => {
     function modal() {

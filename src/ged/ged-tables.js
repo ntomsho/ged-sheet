@@ -354,13 +354,17 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Armor/Robe of Element": {
         description: "This garment or suit of armor is imbued with elemental energy that can be called forth into a protective aura around the wearer.",
-        charge: 2,
+        resource: {
+            name: "Charge",
+            max: 2,
+            refreshOn: "rest"
+        },
         traits: [
             "Spend 1 Charge to surround yourself in a protective field of the artifact’s imbued element. It acts as a spell effect as though you’d cast a spell with the artifact’s imbued element as a Word of Power."
         ],
         specials: ["Element"],
         dropdown: {
-            title: "Choose one of the following benefits.",
+            title: "Choose whether this item is a robe or armor and what it's additional benefit is.",
             options: [
                 {
                     option: "The artifact provides complete immunity to any damage that comes from the element it is imbued with. (Robe - 0 Armor)",
@@ -398,7 +402,11 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Crown of the Wilds": {
         description: "This crown of leaves and branches, decorated with horn, bone, and antler, marks you as a monarch of the wilderness.",
-        charge: 4,
+        resource: {
+            name: "Charge",
+            max: 4,
+            refreshOn: "rest"
+        },
         traits: [
             "While wearing this artifact, you can speak to any animals or magic beasts and have Magic Advantage on rolls to persuade, cajole, or command them.",
             [
@@ -417,7 +425,11 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Winged Boots": {
         description: "These boots sprout wings from the side whenever you need to make a quick escape or leap a great distance.",
-        charge: 2,
+        resource: {
+            name: "Charge",
+            max: 2,
+            refreshOn: "rest"
+        },
         traits: [
             "While wearing these boots, you can leap up to 3 times normal jumping distance without having to roll and you have Magic Advantage on jumping and leaping rolls, including defense rolls where you leap away from harm.",
             "Whenever you are falling, you can slow yourself down and safely descend to the ground or glide.",
@@ -466,7 +478,11 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Necronomicon": {
         description: "You possess one of the famed Books of the Dead, an ancient tome full of profane spells and rituals for communing with and commanding the dead. Neat!",
-        charge: 4,
+        resource: {
+            name: "Charge",
+            max: 4,
+            refreshOn: "rest"
+        },
         traits: [
             [
                 "Spend 1 Charge to perform one of the rituals in the book",
@@ -486,7 +502,11 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Magic Wand": {
         description: "This device holds the imprint of a stored spell that can be released several times per day.",
-        charge: 3,
+        resource: {
+            name: "Charge",
+            max: 3,
+            refreshOn: "rest"
+        },
         traits: [
             "Spend 1 Charge to cast the spell stored in the wand.",
             "Whenever you rest, roll 3 random Words of Power and assemble any one or two of them, along with the Primary Word, into a spell. That spell will be stored in the wand until the next time you rest."
@@ -523,7 +543,6 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Sack of Storing": {
         description: "This seemingly mundane burlap bag acts as a portal to a pocket dimension where you can store a practically limitless amount of stuff. Not only that, but it’s accumulated quite a treasure trove of random items from previous owners over the years.",
-        charge: 5,
         specialRefresh: [
             {
                 specialType: "item",
@@ -538,7 +557,11 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Lantern of Tushuze": {
         description: "This lantern is decorated with the symbol of the Knights of Tushuze and emanates a holy glow.",
-        charge: 3,
+        resource: {
+            name: "Charge",
+            max: 3,
+            refreshOn: "rest"
+        },
         traits: [
             "The lantern requires no oil or fuel and creates bright illumination out for 100 feet. You and your allies have Magic Advantage on rolls to detect traps, hidden hazards, or concealed threats in the light of the lantern.",
             "Spend 1 Charge to make the lantern’s light briefly flare up into searing radiance. Those who look directly at it are blinded for several seconds and the light deals enhanced damage to demons and the undead."
@@ -546,7 +569,11 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Mystic Hourglass": {
         description: "The sand in this curious hourglass “falls” upward into the upper chamber whenever it is flipped.",
-        charge: 3,
+        resource: {
+            name: "Charge",
+            max: 2,
+            refreshOn: "rest"
+        },
         traits: [
             "Spend 1 Charge immediately after you or any other character resolves an Action to jump back a few seconds in time to before that Action was taken. Undo any effects from that Action. You gain Magic Advantage on any rolls you make using what you saw in the alternate future."
         ]
@@ -560,7 +587,12 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Bloodthirsty Weapon": {
         description: "The soul inside this spiky, jagged weapon is compelled to create death and destruction wherever it goes.",
-        charge: 1,
+        resource: {
+            name: "Charge",
+            max: 1,
+            refreshOn: "rest",
+            refreshAmt: 0
+        },
         traits: [
             "Spend 1 Charge to gain Magic Advantage and enhanced damage on an attack roll against a creature.",
             "If the weapon’s charge is already depleted when you do damage with it, it regains 1 Charge. It can never hold more than 1 Charge at once."
@@ -568,7 +600,11 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Holy Revenger": {
         description: "This is one of the holy relic weapons of the Knights of Tushuze. It is inscribed with prayers and blessings of one of the do-gooding deity’s virtues.",
-        charge: 3,
+        resource: {
+            name: "Charge",
+            max: 3,
+            refreshOn: "rest"
+        },
         specials: ["Blessing"],
         traits: [
             "This weapon provides Magic Advantage on attack rolls against demons and the undead and glows with light like a torch when drawn.",
@@ -578,7 +614,11 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Living Weapon": {
         description: "The soul inside this weapon is particularly active. It speaks freely and can temporarily levitate and move on its own. In the ages since its creation it has accumulated significant knowledge, but also grown somewhat... eccentric.",
-        charge: 3,
+        resource: {
+            name: "Charge",
+            max: 3,
+            refreshOn: "rest"
+        },
         specials: [
             "Knowledge",
             "Knowledge",
@@ -608,7 +648,11 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Jester’s Weapon": {
         description: "This garishly decorated weapon is inhabited by the soul of a wise-cracking fool that speaks and creates ridiculous illusions for no purpose other than to mock and humiliate the wielder’s opponents.",
-        charge: 4,
+        resource: {
+            name: "Charge",
+            max: 4,
+            refreshOn: "rest"
+        },
         traits: [
             "Spend 1 Charge to gain Magic Advantage on an attack or defense roll with this weapon as it creates obnoxious distracting illusions and shouts devastating insults at your opponent. If you succeed on the roll and the target is capable of such emotions, it is enraged for the duration of the scene or until you take damage or are embarrassed yourself. You and your allies gain Circumstance Advantage on rolls against enraged enemies except rolls to be diplomatic.",
             "The weapon regains 1 Charge if you succeed on attack or defense roll against a target that was already enraged before the roll."
@@ -635,7 +679,11 @@ export const MAGIC_ARTIFACT_INFO = {
     },
     "Element Weapon": {
         description: "This weapon is imbued with elemental energy that circles it as an aura or is imbued into any ammunition shot from it.",
-        charge: 2,
+        resource: {
+            name: "Charge",
+            max: 2,
+            refreshOn: "rest"
+        },
         specials: ["Element"],
         traits: [
             "Spend 1 Charge to create an elemental effect as though you’d cast a spell with the weapon’s element as a Word of Power."
@@ -648,15 +696,23 @@ export const MAGIC_ARTIFACT_INFO = {
                 },
                 {
                     option: "The artifact has +1 Charge.",
-                    charge: 1
+                    resource: {
+                        name: "Charge",
+                        max: 3,
+                        refreshOn: "rest"
+                    }
                 }
             ]
         }
     },
     "Lifestealing Weapon": {
         description: "This cruel-looking weapon is decorated with a number of channels for blood to flow through (yes, even if it’s a ranged weapon). It’s all very metal.",
-        charge: 4,
-        baseZeroCharge: true,
+        resource: {
+            name: "Charge",
+            max: 4,
+            refreshOn: "rest",
+            refreshAmt: 0
+        },
         traits: [
             "Whenever you deal damage with this weapon, it gains Charge equal to the damage dealt. It can hold up to 4 Charge at once.",
             "Spend any amount of Charge to regain that much Health.",
@@ -1914,3 +1970,500 @@ export const VERBS = [
     "Summon",
     "Wither"
 ];
+
+export const GRIMDARK_FIRST_NAMES = {
+    "male": [
+        "Arcturus",
+        "Atreus",
+        "Barack",
+        "Blade",
+        "Bloode",
+        "Brick",
+        "Bull",
+        "Dirk",
+        "Drake",
+        "Edge",
+        "Falkon",
+        "Fenix",
+        "Gorbash",
+        "Greeve",
+        "Hammergor",
+        "Hawke",
+        "Jackal",
+        "Kargash",
+        "Krol",
+        "Magnus",
+        "Maverick",
+        "Nero",
+        "Praxis",
+        "Pretorius",
+        "Rash",
+        "Rex",
+        "Rickard",
+        "Rock",
+        "Skorn",
+        "Steele",
+        "Stryker",
+        "Thrash",
+        "Torm",
+        "Viktor",
+        "Wolfe",
+        "Wulfgar"
+    ],
+    "female": [
+        "Arsonine",
+        "Axibell",
+        "Belladonna",
+        "Bianca",
+        "Defenestralia",
+        "Dromaine",
+        "Drusilla",
+        "Freya",
+        "Kara",
+        "Killtober",
+        "Kira",
+        "Lana",
+        "Lara",
+        "Lilith",
+        "Lotus",
+        "Mara",
+        "Maya",
+        "Moira",
+        "Morgan",
+        "Morrigan",
+        "Nightshade",
+        "Niko",
+        "Nox",
+        "Osprey",
+        "Rayne",
+        "Shard",
+        "Shrike",
+        "Stabarella",
+        "Stilletta",
+        "Storm",
+        "Strix",
+        "Tyrene",
+        "Vayne",
+        "Vesper",
+        "Whisper",
+        "Zandra"
+    ]
+};
+
+export const WHIMSICAL_FIRST_NAMES = {
+    "male": [
+        "Avle",
+        "Bertimund",
+        "Billiam",
+        "Bing",
+        "Charlemite",
+        "Dinsdale",
+        "Donnybrook",
+        "Drummond",
+        "Eldrong",
+        "Farfalle",
+        "Frumm",
+        "Ganswick",
+        "Hamhock",
+        "Higgins",
+        "Izidore",
+        "Jackanape",
+        "Jangles",
+        "Joshuite",
+        "Kwasi",
+        "Louie",
+        "Murray",
+        "Nilman",
+        "Osgirth",
+        "Pilbert",
+        "Pollywog",
+        "Portmanteau",
+        "Quentrick",
+        "Rumbottle",
+        "Shrubley",
+        "Trethaniel",
+        "Umbert",
+        "Vik",
+        "Xanfred",
+        "Wally",
+        "Whistler",
+        "Zeke"
+    ],
+    "female": [
+        "Amodee",
+        "Benedine",
+        "Berry",
+        "Bluecap",
+        "Brook",
+        "Cherry",
+        "Dee",
+        "Evie",
+        "Fifaffle",
+        "Frandreshore",
+        "Gollyfree",
+        "Hannifer",
+        "Holly",
+        "Inga",
+        "Jelica",
+        "Kinsley",
+        "Kremona",
+        "Lily",
+        "Mollycoddle",
+        "Nilly",
+        "Olivine",
+        "Pebble",
+        "Plumbella",
+        "Poppy",
+        "Primrose",
+        "Quillby",
+        "Rapscallia",
+        "Serendipity",
+        "Sprig",
+        "Steffandra",
+        "Thimble",
+        "Twillifred",
+        "Underose",
+        "Vangeline",
+        "Willicent",
+        "Zandalee"
+    ]
+};
+
+export const OLD_TIMEY_FIRST_NAMES = {
+    "male": [
+        "Abraham",
+        "Arthur",
+        "August",
+        "Bernard",
+        "Byron",
+        "Chester",
+        "Clifford",
+        "Cornelius",
+        "Ephraim",
+        "Hannibal",
+        "Harvey",
+        "Heiram",
+        "Howard",
+        "Humbert",
+        "Leopold",
+        "Jasper",
+        "Julius",
+        "Maximillian",
+        "Milton",
+        "Nelson",
+        "Phineas",
+        "Randall",
+        "Roderick",
+        "Rutherford",
+        "Sebastian",
+        "Sterling",
+        "Thaddeus",
+        "Theodore",
+        "Tobias",
+        "Ulysses",
+        "Waldo",
+        "Wallace",
+        "Wendell",
+        "Windsor",
+        "Winston",
+        "Zebediah"
+    ],
+    "female": [
+        "Adelaide",
+        "Agatha",
+        "Beatrice",
+        "Bernadette",
+        "Calliope",
+        "Cordelia",
+        "Dahlia",
+        "Delilah",
+        "Edith",
+        "Elaine",
+        "Eleanor",
+        "Florence",
+        "Francine",
+        "Genevieve",
+        "Georgina",
+        "Gertrude",
+        "Harriet",
+        "Hazel",
+        "Helvetica",
+        "Imogen",
+        "Lavinia",
+        "Louise",
+        "Lydia",
+        "Margaret",
+        "Marjorie",
+        "Martha",
+        "Matilda",
+        "Maude",
+        "Maxine",
+        "Millicent",
+        "Olive",
+        "Rose",
+        "Rosemary",
+        "Ruby",
+        "Violet",
+        "Winifred"
+    ]
+}
+
+export const MUNDANE_FIRST_NAMES = {
+    "male": [
+        "Aaron",
+        "Andy",
+        "Benny",
+        "Billy",
+        "Bob",
+        "Brad",
+        "Brett",
+        "Buck",
+        "Bud",
+        "Calvin",
+        "Chad",
+        "Charlie",
+        "Clarence",
+        "Clint",
+        "Craig",
+        "Dave",
+        "Ed",
+        "Frank",
+        "Fred",
+        "Hank",
+        "Jeffrey",
+        "Jimbo",
+        "Joe",
+        "Johnny",
+        "Kenny",
+        "Kyle",
+        "Marc",
+        "Moe",
+        "Nicky",
+        "Paul",
+        "Ralph",
+        "Roberto",
+        "Stan",
+        "Steve",
+        "Tony",
+        "Willis"
+    ],
+    "female": [
+        "Allie",
+        "Amanda",
+        "Becka",
+        "Becky",
+        "Beth",
+        "Betty",
+        "Billie",
+        "Brenda",
+        "Brittany",
+        "Christie",
+        "Cindy",
+        "Deborah",
+        "Donna",
+        "Frances",
+        "Jen",
+        "Jessica",
+        "Julie",
+        "Kayla",
+        "Kim",
+        "Linda",
+        "Lisa",
+        "Liz",
+        "Mandy",
+        "Mindy",
+        "Michelle",
+        "Nancy",
+        "Nicole",
+        "Sharon",
+        "Shelley",
+        "Stacy",
+        "Steph",
+        "Susan",
+        "Tina",
+        "Veronica",
+        "Wanda",
+        "Wendy"
+    ]
+};
+
+export const GRIMDARK_LAST_NAMES = {
+    "affixes": [
+        "angry",
+        "axe",
+        "battle",
+        "blade",
+        "bound",
+        "born",
+        "burn",
+        "crown",
+        "double",
+        "elk",
+        "evil",
+        "eye",
+        "fire",
+        "flame",
+        "forge",
+        "frost",
+        "hammer",
+        "hand",
+        "hell",
+        "hide",
+        "hound",
+        "kick",
+        "nasty",
+        "night",
+        "pillage",
+        "quick",
+        "rage",
+        "scream",
+        "slash",
+        "storm",
+        "stride",
+        "strike",
+        "terror",
+        "thrash",
+        "wolf",
+        "wrath"
+    ]
+};
+
+export const CLASSIC_LAST_NAMES = {
+    "prefixes": [
+        "Anvil",
+        "Bel",
+        "Bent",
+        "Bo",
+        "Chad",
+        "Cods",
+        "Coffin",
+        "Den",
+        "Dinkle",
+        "Engel",
+        "Farns",
+        "Flea",
+        "Glad",
+        "Gourd",
+        "Ham",
+        "Higgins",
+        "Ingle",
+        "Jeff",
+        "Ken",
+        "Linter",
+        "Mander",
+        "Murder",
+        "Nor",
+        "Olla",
+        "Peter",
+        "Quen",
+        "Ren",
+        "Shrub",
+        "Slender",
+        "Smith",
+        "Solo",
+        "Tingle",
+        "Umber",
+        "Vender",
+        "Wendel",
+        "Wool"
+    ],
+    "suffixes": [
+        "berg",
+        "bert",
+        "dorf",
+        "fred",
+        "frey",
+        "gard",
+        "ham",
+        "height",
+        "house",
+        "ley",
+        "ling",
+        "man",
+        "rick",
+        "ville",
+        "well",
+        "wick",
+        "worth",
+        "wright"
+    ]
+};
+
+export const WHIMSICAL_LAST_NAMES = {
+    "prefixes": [
+        "Bellow",
+        "Bicker",
+        "Bramble",
+        "Canny",
+        "Crow",
+        "Dale",
+        "Dancing",
+        "Dew",
+        "Elf",
+        "Elm",
+        "Flit",
+        "Glimmer",
+        "Hasty",
+        "Long",
+        "Moon",
+        "Noisy",
+        "Oaken",
+        "Ogre",
+        "Perry",
+        "Pip",
+        "Rat",
+        "Ribbon",
+        "Ring",
+        "Scurry",
+        "Shaky",
+        "Shiny",
+        "Silver",
+        "Sing",
+        "Slim",
+        "Slither",
+        "Sugar",
+        "Tall",
+        "Under",
+        "Whimsy",
+        "White",
+        "Wiggle"
+    ],
+    "suffixes": [
+        "ball",
+        "bee",
+        "bird",
+        "bottle",
+        "bug",
+        "critter",
+        "cup",
+        "drop",
+        "feather",
+        "fellow",
+        "fiddle",
+        "fish",
+        "fly",
+        "hedge",
+        "jack",
+        "jangle",
+        "king",
+        "kit",
+        "lake",
+        "moon",
+        "mouse",
+        "pail",
+        "queen",
+        "root",
+        "slink",
+        "slip",
+        "song",
+        "spell",
+        "squeak",
+        "stone",
+        "tangle",
+        "thumb",
+        "willow",
+        "winkle",
+        "wood",
+        "wort"
+    ]
+}

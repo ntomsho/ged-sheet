@@ -6,6 +6,7 @@ import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import { Dropdown } from 'react-bootstrap';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 class CharacterFeature extends React.Component {
     constructor(props) {
@@ -80,9 +81,9 @@ class CharacterFeature extends React.Component {
             newResource.current = resource.refreshAmt ? resource.refreshAmt : resource.max;
             return setFunction("resource", newResource);
         }
-        return <>
+        return <div className="feature-comp-box">
             <div className="grenze">{resource.name}</div>
-            <InputGroup>
+            <InputGroup style={{justifyContent: "center"}}>
                 <InputGroup.Prepend>
                     <Button disabled={source.resource.current <= 0} variant="dark" onClick={() => this.updateResource(false, upgrade)}>-</Button>
                 </InputGroup.Prepend>
@@ -96,7 +97,7 @@ class CharacterFeature extends React.Component {
                 :
                 <></>
             }
-        </>
+        </div>
     }
 
     updateResource(increment, upgrade) {
@@ -153,25 +154,25 @@ class CharacterFeature extends React.Component {
         specials.forEach((special, i) => {
             let thisComp = [];
             thisComp.push(
-                <span className="grenze">{special}: </span>
+                <div>
+                    <span className="grenze">{special}: </span>
+                    {source.specials[i] ?
+                    <span><strong>{source.specials[i]}</strong></span> :
+                    <></>}
+                </div>
             )
-            if (source.specials[i]) {
-                thisComp.push(<>
-                    <span>{source.specials[i]}</span>
-                </>)
-            }
             thisComp.push(
                 <Button className="random-button" variant={source.specials[i] ? "outline-warning" : "outline-dark"} disabled={this.props.rerolls <= 0 && source.specials[i]} onClick={() => this.updateSpecial(special, i, specials, upgrade)}>{source.specials[i] ? "Reroll" : "Roll"} {special}</Button>
             )
             specialComps.push(
-                <li key={i}>
-                    {thisComp}
-                </li>);
+                <div key={i} style={{width: "100%", margin: "5px 0"}}>
+                    <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>{thisComp}</div>
+                </div>);
         });
         return (
-            <ul>
+            <div className="feature-comp-box">
                 {specialComps}
-            </ul>
+            </div>
         );
     }
 
@@ -385,15 +386,15 @@ class CharacterFeature extends React.Component {
         if (this.props.feature.dropdownChoice) {
             dropdownChoiceName = this.props.feature.dropdownChoice.option;
         }
-        return (<>
+        return (<div className="feature-comp-box">
             <div>{dropdown.title}</div>
-            <Dropdown>
+            <Dropdown className="w-100">
                 <Dropdown.Toggle className="long-text-button" variant="light">{dropdownChoiceName ? dropdownChoiceName : "Choose one"}</Dropdown.Toggle>
                 <Dropdown.Menu>
                     {dropdown.options.map((choice, i) => <Dropdown.Item key={i} as="button" className="long-text-button" onClick={() => this.setField("dropdownChoice", choice)}>{choice.option}</Dropdown.Item>)}
                 </Dropdown.Menu>
             </Dropdown>
-        </>)
+        </div>)
     }
 
     addCustomSpecial(specialIndex, customSpecial, upgrade) {
@@ -411,14 +412,21 @@ class CharacterFeature extends React.Component {
                     </Accordion.Toggle>
                 </Card.Header>
                 <Accordion.Collapse eventKey={this.props.index + 1}>
+                    <Card>
                     <Card.Body>
                         {this.featureComp()}
-                        {this.props.feature.upgrade ? 
-                            <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.removeUpgrade}>Reroll Upgrade as New Feature</Button>
-                            :
-                            <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.rerollFeature}>Reroll Character Feature</Button>
-                        }
                     </Card.Body>
+                    <Card.Footer>
+                        <ButtonGroup style={{display: "flex", justifyContent: "space-around"}}>
+                            {this.rerollButtons ? this.rerollButtons() : null}
+                            {this.props.feature.upgrade ? 
+                                <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.removeUpgrade}>Reroll Upgrade as New Feature</Button>
+                                :
+                                <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.rerollFeature}>Reroll Character Feature</Button>
+                            }
+                        </ButtonGroup>
+                    </Card.Footer>
+                    </Card>
                 </Accordion.Collapse>
             </Card>
         )

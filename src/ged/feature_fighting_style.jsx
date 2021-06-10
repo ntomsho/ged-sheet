@@ -67,18 +67,19 @@ class FeatureFightingStyle extends CharacterFeature {
         return comps;
     }
 
+    rerollButtons() {
+        return <Button className="random-button" disabled={this.props.rerolls <= 0 && this.props.feature.combatSkill} variant={this.props.feature.combatSkill ? "outline-warning" : "outline-dark"} onClick={() => this.randomize("combatSkill")}>{this.props.feature.combatSkill ? "Reroll" : "Roll"} Combat Skill</Button>
+    }
+
     featureComp() {
         if (!this.props.feature.combatSkill) {
-            return <>
-                <Button className="random-button" disabled={this.props.rerolls <= 0 && this.props.feature.combatSkill} variant="outline-dark" onClick={() => this.randomize("combatSkill")}>Roll Combat Skill</Button>
-            </>
+            return <></>
         } else {
             return (
                 <>
                     {this.combatSkillComp()}
                     {this.styleBonusComp()}
                     {this.upgradeComp()}
-                    <Button className="random-button" disabled={this.props.rerolls <= 0 && this.props.feature.combatSkill} variant="outline-warning" onClick={() => this.randomize("combatSkill")}>Reroll Combat Skill</Button>
                 </>
             )
         }

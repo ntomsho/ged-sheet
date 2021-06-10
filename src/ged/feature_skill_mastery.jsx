@@ -5,6 +5,8 @@ import Button from 'react-bootstrap/Button'
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 class FeatureSkillMastery extends CharacterFeature {
     titleComp() {
@@ -17,15 +19,7 @@ class FeatureSkillMastery extends CharacterFeature {
     masteryComp(mastery, upgrade) {
         let components = [];
         components.push(
-            <>
-            <h3>{upgrade ? this.props.feature.upgrade.mastery : this.props.feature.mastery}</h3>
-            <div>{mastery.description}</div>
-            <ul>
-                {mastery.traits.map((trait, i) => {
-                    return <li key={i}>{trait}</li>
-                })}
-            </ul>
-            </>
+            
         );
         if (mastery.upgradeText) {
             components.push(<div><strong>Upgrade: </strong>{mastery.upgradeText}</div>)
@@ -45,8 +39,25 @@ class FeatureSkillMastery extends CharacterFeature {
         if (mastery.menagerie) {
             components.push(this.zoomasterComp(upgrade));
         }
-        components.push(this.masteryChoiceComp(upgrade))
-        return components;
+        return (<>
+            <h3>{upgrade ? this.props.feature.upgrade.mastery : this.props.feature.mastery}</h3>
+            <Row xs={1} sm={2}>
+                <Col>
+                    <div>{mastery.description}</div>
+                    <ul>
+                        {mastery.traits.map((trait, i) => {
+                            return <li key={i}>{trait}</li>
+                        })}
+                    </ul>
+                </Col>
+                {components.length > 0 ?
+                <Col>
+                    {components}
+                </Col>:
+                <></>}
+            </Row>
+            <Row>{this.masteryChoiceComp(upgrade)}</Row>
+        </>)
     }
 
     upgradeComp() {
@@ -226,11 +237,13 @@ class FeatureSkillMastery extends CharacterFeature {
         )
     }
 
+    rerollButtons() {
+        return <Button className="random-button" disabled={this.props.rerolls <= 0 && this.props.feature.trainedSkill} variant={this.props.feature.trainedSkill ? "outline-warning" : "outline-dark"} onClick={() => this.randomize("trainedSkill")}>{this.props.feature.trainedSkill ? "Roll" : "Reroll"} Trained Skill</Button>
+    }
+
     featureComp() {
         if (!this.props.feature.trainedSkill) {
-            return <>
-                <Button className="random-button" disabled={this.props.rerolls <= 0 && this.props.feature.trainedSkill} variant="outline-dark" onClick={() => this.randomize("trainedSkill")}>Roll Trained Skill</Button>
-            </>
+            return <></>
         } else {
             let components = [];
             if (this.props.feature.mastery) {
@@ -248,10 +261,11 @@ class FeatureSkillMastery extends CharacterFeature {
 
             return (
                 <>
-                    <h3>{this.props.feature.trainedSkill}</h3>
-                    <div>{tables.SKILL_DESCRIPTIONS[this.props.feature.trainedSkill].covers}</div>
+                    <div>
+                        <h3>{this.props.feature.trainedSkill}</h3>
+                        <div>{tables.SKILL_DESCRIPTIONS[this.props.feature.trainedSkill].covers}</div>
+                    </div>
                     {components}
-                    <Button className="random-button" disabled={this.props.rerolls <= 0 && this.props.feature.trainedSkill} variant="outline-warning" onClick={() => this.randomize("trainedSkill")}>Reroll Trained Skill</Button>
                 </>
             )
         }

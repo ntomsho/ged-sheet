@@ -36,6 +36,14 @@ class Skills extends React.Component {
         return false;
     }
 
+    randomizeSkill() {
+        let newSkill = tables.CIVILIZED_SKILLS[Math.floor(Math.random() * tables.CIVILIZED_SKILLS.length)];
+        while (this.checkTrained(newSkill)) {
+            newSkill = tables.CIVILIZED_SKILLS[Math.floor(Math.random() * tables.CIVILIZED_SKILLS.length)];
+        }
+        this.props.updateSkill(newSkill)
+    }
+
     getImage(skill) {
         switch (skill) {
             case "Believe in Yourself": return believeImg;
@@ -126,7 +134,7 @@ class Skills extends React.Component {
                         </Row>
                         <Row>
                             <Col className="justify-content-center" style={{display: "flex"}}>
-                                <Button block className="random-button w-50 mt-4 mb-4" disabled={this.props.rerolls <= 0 && this.props.bonusSkill} variant={this.props.bonusSkill ? "outline-warning" : "outline-dark"} onClick={() => this.props.randomizeSkill("bonusSkill")}>{this.props.bonusSkill ? "Reroll" : "Roll"} Trained Skill</Button>
+                                <Button block className="random-button w-50 mt-4 mb-4" disabled={this.props.rerolls <= 0 && this.props.bonusSkill} variant={this.props.bonusSkill ? "outline-warning" : "outline-dark"} onClick={() => this.randomizeSkill()}>{this.props.bonusSkill ? "Reroll" : "Roll"} Trained Skill</Button>
                             </Col>
                         </Row>
                         </div>

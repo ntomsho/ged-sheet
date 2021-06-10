@@ -13,6 +13,22 @@ class FeatureWordsOfPower extends CharacterFeature {
         </>
     }
 
+    descriptionComp() {
+        return (
+            <div>
+                <p>You create spells by combining two or more Words of Power into a phrase that conjures the effect into the world. You must be able to speak to cast a spell in this manner.</p>
+                <p>When you choose this feature, roll 4 random Words of Power on the table below. These are your starting Words of Power. Choose one to be your Signature Word. Whenever you rest, your Signature Word is refreshed, any other Words you haven’t used are lost, and you roll 3 new ones from the table.</p>
+                <p>When you use Words of Power to cast a spell, do the following:</p>
+                <ul>
+                    <li>Arrange any two or three Words you currently have access to into a phrase. You can change any word grammatically (e.g. turn “Restore” into “Restoring” or “Restoration”) and can add “of” where necessary to create a grammatical phrase.</li>
+                    <li>Tell the Director what this spell does and which spell effect you want to create with it.</li>
+                    <li>If the Director approves the effect, the spell is cast.</li>
+                    <li>Choose one of the Words used in the spell. It is expended and cannot be used again.</li>
+                </ul>
+            </div>
+        )
+    }
+
     upgradeComp() {
         if (!this.props.feature.upgrade) return <></>
         if (!this.props.feature.currentSpecials) return <></>
@@ -63,6 +79,7 @@ class FeatureWordsOfPower extends CharacterFeature {
 
         return (
             <div>
+            {this.descriptionComp()}
             {wordsComp}
             {this.upgradeComp()}
             </div>

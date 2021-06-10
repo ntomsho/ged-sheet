@@ -1,5 +1,6 @@
 import React from 'react';
 import * as tables from './ged-tables';
+import NameComp from './name_comp';
 import CharacterFeature from './character_feature';
 import FeatureFightingStyle from './feature_fighting_style';
 import FeatureMagicArtifact from './feature_magic_artifact';
@@ -21,7 +22,7 @@ class CharSheet extends React.Component {
     constructor (props) {
         super(props);
         if (window.location.hash) {
-            this.state = JSON.parse(atob(window.location.hash.slice(1)));
+            this.state = JSON.parse(unescape(atob(window.location.hash.slice(1))));
         } else {
             this.state = {
                 level: 1,
@@ -54,6 +55,7 @@ class CharSheet extends React.Component {
         this.updatePlotPoints = this.updatePlotPoints.bind(this);
         this.plotPointsTrackerDisp = this.plotPointsTrackerDisp.bind(this);
         this.updateFeature = this.updateFeature.bind(this);
+        this.updateSkill = this.updateSkill.bind(this);
         this.updateInventory = this.updateInventory.bind(this);
         this.updateExperience = this.updateExperience.bind(this);
         this.populateFeatures = this.populateFeatures.bind(this);
@@ -64,11 +66,11 @@ class CharSheet extends React.Component {
         this.removeUpgrade = this.removeUpgrade.bind(this);
         this.levelUp = this.levelUp.bind(this);
 
-        window.addEventListener("hashchange", () => this.setState(JSON.parse(atob(window.location.hash.slice(1)))));
+        window.addEventListener("hashchange", () => this.setState(JSON.parse(unescape(atob(window.location.hash.slice(1))))));
     }
 
     saveState(newState) {
-        const hash = btoa(JSON.stringify(newState));
+        const hash = btoa(escape(JSON.stringify(newState)));
         window.location.hash = hash;
         this.setState(newState);
     }
@@ -279,13 +281,63 @@ class CharSheet extends React.Component {
         newState.features[index] = obj;
         if (reroll) newState.rerolls--;
         this.checkItemReqs(newState);
+        this.checkSkillRepeat(newState);
         this.saveState(this.calculateHealthAndArmor(newState));
     }
 
     checkItemReqs(newState) {
         if (newState.inventory) {
-            newState.inventory = newState.inventory.filter(item => !item.featureReq || newState.features.map(feature => feature.artifact).includes(item.featureReq));
+            let artifacts = {};
+            newState.features.forEach((feature, i) => {
+                if (feature.artifact) {
+                    artifacts[feature.artifact] = {index: i, present: false};
+                }
+            });
+            if (Object.keys(artifacts).length === 0) return newState;
+            for (let i = 0; i < newState.inventory.length; i++) {
+                if (newState.inventory[i].featureReq) {
+                    if (!Object.keys(artifacts).includes(newState.inventory[i].featureReq)) {
+                        newState.inventory.splice(i, 1);
+                        i--;
+                    } else {
+                        artifacts[newState.inventory[i].featureReq].present = true;
+                    }
+                }
+            }
+            Object.keys(artifacts).forEach(name => {
+                if (artifacts[name].present === false) {
+                    const feature = newState.features[artifacts[name].index];
+                    let artifact;
+                    if (feature.item) artifact = feature.item;
+                    if (feature.upgrade && feature.upgrade.item) artifact = feature.upgrade;
+                    if (feature.dropdownChoice && feature.dropdownChoice.item) artifact = feature.dropdownChoice.item;
+                    if (artifact) {
+                        artifact.featureReq = feature.artifact;
+                        newState.inventory.push(artifact);
+                    } else {
+                        newState.inventory.push({ name: feature.artifact, itemType: "Artifact", featureReq: feature.artifact });
+                    }
+                }
+            });
+            return newState;
+            // let artifacts = newState.features.map(feature => feature.artifact).filter(ele => !!ele);
+            // newState.inventory = newState.inventory.filter(item => !item.featureReq || artifacts.includes(item.featureReq));
         }
+    }
+
+    checkSkillRepeat(newState) {
+        newState.features.forEach(feature => {
+            if (feature && feature.trainedSkill && feature.trainedSkill === newState.bonusSkill) {
+                newState.bonusSkill = null;
+            }
+        });
+        return newState;
+    }
+
+    updateSkill(skill) {
+        let newState = Object.assign({}, this.state);
+        newState.bonusSkill = skill;
+        this.saveState(newState);
     }
 
     updateInventory(newInv) {
@@ -318,7 +370,7 @@ class CharSheet extends React.Component {
                         features[i] = [<FeatureMagicArtifact index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Skill Mastery":
-                        features[i] = [<FeatureSkillMastery index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureSkillMastery index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} bonusSkill={this.state.bonusSkill} updateSkill={this.updateSkill} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Special Ancestry":
                         features[i] = [<FeatureSpecialAncestry index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
@@ -442,25 +494,20 @@ class CharSheet extends React.Component {
                     {this.rerollTracker()}
                 </Row>
                 <Row id="main-section" ref={this.mainRef} className="mb-3">
-                    <Form>
-                    <Col xs={6} md={4} className="my-1">
-                        <Form.Label className="grenze mb-0">Name</Form.Label>
-                        <Form.Control type="text" name="name" id="name-input" onChange={this.handleChange} value={this.state.charName} />
-                    </Col>
-                    </Form>
+                    <NameComp charName={this.state.charName} handleChange={this.handleChange} />
                 </Row>
                 <Row>
-                    <Col xs={12} md={4} className="my-1">
+                    <Col xs={4} className="my-1">
                         <div className="grenze mb-0">Background</div>
                         <div>{this.state.background}</div>
                         <Button className="random-button" disabled={this.state.rerolls <= 0 && this.state.background} variant={this.state.background ? "outline-warning" : "outline-dark"} onClick={() => this.randomize("background")}>{this.state.background ? "Reroll" : "Roll"}</Button>
                     </Col>
-                    <Col xs={12} md={4} className="my-1">
+                    <Col xs={4} className="my-1">
                         <div className="grenze mb-0">Appearance</div>
                         <div>{this.state.appearance}</div>
                         <Button className="random-button" disabled={this.state.rerolls <= 0 && this.state.appearance} variant={this.state.appearance ? "outline-warning" : "outline-dark"} onClick={() => this.randomize("appearance")}>{this.state.appearance ? "Reroll" : "Roll"}</Button>
                     </Col>
-                    <Col xs={12} md={4} className="my-1">
+                    <Col xs={4} className="my-1">
                         <div className="grenze mb-0">DERP</div>
                         <div>{this.state.derp}</div>
                         <Button className="random-button" disabled={this.state.rerolls <= 0 && this.state.derp} variant={this.state.derp ? "outline-warning" : "outline-dark"} onClick={() => this.randomize("derp")}>{this.state.derp ? "Reroll" : "Roll"}</Button>
@@ -490,7 +537,7 @@ class CharSheet extends React.Component {
                     </Accordion>
                 </Row>
                 <Row>
-                    <Skills features={this.state.features} bonusSkill={this.state.bonusSkill} randomizeSkill={this.randomize} rerolls={this.state.rerolls} useReroll={this.useReroll} />
+                    <Skills features={this.state.features} bonusSkill={this.state.bonusSkill} updateSkill={this.updateSkill} rerolls={this.state.rerolls} useReroll={this.useReroll} />
                 </Row>
                 <Row>
                     <Inventory inventory={this.state.inventory} features={this.state.features} updateInventory={this.updateInventory} rerolls={this.state.rerolls} useReroll={this.useReroll} />

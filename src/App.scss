@@ -60,6 +60,16 @@ h1, h2, h3 {
     display: none !important;
 }
 
+.feature-comp-box {
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 5px;
+  margin: 1vw 0;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 .form-submit-button {
     width: 100%;
 }
@@ -81,7 +91,7 @@ h1, h2, h3 {
 }
 
 .long-text-button{
-  width: 75vw;
+  width: 100%;
   white-space: normal;
 }
 
