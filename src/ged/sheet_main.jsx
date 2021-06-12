@@ -26,7 +26,7 @@ class CharSheet extends React.Component {
         } else {
             this.state = {
                 level: 1,
-                rerolls: 4000,
+                rerolls: 10,
                 charName: "",
                 background: null,
                 appearance: null,

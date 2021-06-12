@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import * as tables from './ged-tables';
 import CharacterFeature from './character_feature';
 import Button from 'react-bootstrap/Button'
 import Dropdown from 'react-bootstrap/Dropdown';
-import Card from 'react-bootstrap/Card';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import InputGroup from 'react-bootstrap/InputGroup'
 
 class FeatureSpecialAncestry extends CharacterFeature {
@@ -162,10 +163,7 @@ class FeatureSpecialAncestry extends CharacterFeature {
             )
         }
         const ancestryInfo = tables.SPECIAL_ANCESTRY_INFO[ancestry.ancestry];
-        let comps = [
-            <div className="grenze">{ancestry.ancestry}</div>,
-            <div>{ancestryInfo.description}</div>
-        ];
+        let comps = [];
         if (ancestryInfo.resource) {
             comps.push(this.resourceComp(ancestryInfo.resource, index));
         }
@@ -179,10 +177,23 @@ class FeatureSpecialAncestry extends CharacterFeature {
             comps.push(this.dropdownComp(ancestryInfo.dropdown, index));
         }
         return (
-            <div key={index}>
-                {comps}
-                <Button className="random-button" variant="outline-warning" onClick={() => this.randomizeAncestries(index)}>Reroll Ancestry</Button >
-            </div>
+            <>
+            <Row>
+                <h3>{ancestry.ancestry}</h3>
+            </Row>
+            <Row xs={1} sm={comps.length > 0 ? 2 : 1} key={index}>
+                <Col>
+                    <div>{ancestryInfo.description}</div>
+                </Col>
+                {comps.length > 0 ?
+                    <Col>{comps}</Col> :
+                    <></>
+                }
+            </Row>
+            <Row>
+                <Button className="random-button w-50 mt-3" variant="outline-warning" onClick={() => this.randomizeAncestries(index)}>Reroll Ancestry</Button >
+            </Row>
+            </>
         )
     }
 
@@ -196,7 +207,11 @@ class FeatureSpecialAncestry extends CharacterFeature {
             if (this.props.feature.upgrade && !this.props.feature.upgrade.ancestries) {
                 comps.push(<Button className="random-button" variant="outline-dark" onClick={() => this.addAncestrySlots(2)}>Upgrade: Add new Ancestry slots</Button>)
             }
-            comps.push(this.props.feature.ancestries.map((ancestry, i) => this.ancestryComp(ancestry, i)))
+            comps = comps.concat(this.props.feature.ancestries.map((ancestry, i) => this.ancestryComp(ancestry, i)));
+            const ancestriesLength = comps.length;
+            for (let i = 0; i < ancestriesLength - 1; i++) {
+                comps.splice(i * 2 + 1, 0, <div style={{width: "100%", height: "2px", border: "1px solid black", margin: "1vw 0"}} />)
+            }
             return comps;
         }
     }

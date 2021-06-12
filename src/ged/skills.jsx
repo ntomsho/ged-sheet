@@ -32,6 +32,9 @@ class Skills extends React.Component {
             if (this.props.features[i].trainedSkill === skill || this.props.features[i].combatSkill === skill) {
                 return true;
             }
+            if (this.props.features[i].upgrade && this.props.features[i].upgrade.combatSkill === skill) {
+                return true;
+            }
         }
         return false;
     }

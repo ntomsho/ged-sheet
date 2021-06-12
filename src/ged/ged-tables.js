@@ -1335,7 +1335,7 @@ export const WORDS_OF_POWER = [
 ];
 
 export const BEAST_TYPES = [
-    ["Element Adjective", "Animal"],
+    ["Element", "Animal"],
     ["Animal", "Animal"]
 ]
 
@@ -1887,21 +1887,6 @@ export const KNOWLEDGES = [
     "Poetry & Literature"
 ];
 
-export const ROGUE_TRICKS = [
-    "Caltrops",
-    "Lockpicks",
-    "Chameleon cloak",
-    "Magic ammunition",
-    "Climbing gear",
-    "Magic blackjack",
-    "Counterfeit coins",
-    "Magic knife",
-    "Fake mustache",
-    "Smoke bomb",
-    "Living rope",
-    "Vial of poison"
-];
-
 export const SONGS = [
     "Ballad of Battle",
     "Mosh Pit",
@@ -1970,6 +1955,204 @@ export const VERBS = [
     "Summon",
     "Wither"
 ];
+
+export const VERBS_ALTERNATE = {
+    "Absorb": {
+        present: "Absorbing",
+        noun: "Absorption"
+    },
+    "Control": {
+        present: "Controlling",
+        noun: "Control"
+    },
+    "Enlarge": {
+        present: "Enlarging",
+        noun: "Enlargement"
+    },
+    "Blast": {
+        present: "Blasting",
+        noun: "Blasting"
+    },
+    "Crush": {
+        present: "Crushing",
+        noun: "Crushing"
+    },
+    "Ensnare": {
+        present: "Ensnaring",
+        noun: "Ensnaring"
+    },
+    "Blind": {
+        present: "Blinding",
+        noun: "Blindness"
+    },
+    "Curse": {
+        present: "Cursing",
+        noun: "Cursing"
+    },
+    "Explode": {
+        present: "Exploding",
+        noun: "Explosion"
+    },
+    "Charm": {
+        present: "Charming",
+        noun: "Charm"
+    },
+    "Deceive": {
+        present: "Deceiving",
+        noun: "Deception"
+    },
+    "Hasten": {
+        present: "Hastening",
+        noun: "Haste"
+    },
+    "Conceal": {
+        present: "Concealing",
+        noun: "Concealment"
+    },
+    "Destroy": {
+        present: "Destroying",
+        noun: "Destruction"
+    },
+    "Heal": {
+        present: "Healing",
+        noun: "Healing"
+    },
+    "Conjure": {
+        present: "Conjuring",
+        noun: "Conjuring"
+    },
+    "Duplicate": {
+        present: "Duplicating",
+        noun: "Duplication"
+    },
+    "Immobilize": {
+        present: "Immobilizing",
+        noun: "Immobilization"
+    },
+    "Levitate": {
+        present: "Levitate",
+        noun: "Levitation"
+    },
+    "Restore": {
+        present: "Restoring",
+        noun: "Restoration"
+    },
+    "Teleport": {
+        present: "Teleporting",
+        noun: "Teleportation"
+    },
+    "Nullify": {
+        present: "Nullifying",
+        noun: "Nullification"
+    },
+    "Reveal": {
+        present: "Revealing",
+        noun: "Revealing"
+    },
+    "Terrify": {
+        present: "Terrifying",
+        noun: "Terror"
+    },
+    "Pierce": {
+        present: "Piercing",
+        noun: "Piercing"
+    },
+    "See": {
+        present: "Seeing",
+        noun: "Seeing"
+    },
+    "Transform": {
+        present: "Transforming",
+        noun: "Transformation"
+    },
+    "Protect": {
+        present: "Protecting",
+        noun: "Protection"
+    },
+    "Shrink": {
+        present: "Shrinking",
+        noun: "Shrinking"
+    },
+    "Understand": {
+        present: "Understanding",
+        noun: "Understanding"
+    },
+    "Regenerate": {
+        present: "Regenerating",
+        noun: "Regeneration"
+    },
+    "Silence": {
+        present: "Silencing",
+        noun: "Silence"
+    },
+    "Warp": {
+        present: "Warping",
+        noun: "Warping"
+    },
+    "Repel": {
+        present: "Repelling",
+        noun: "Repulsion"
+    },
+    "Summon": {
+        present: "Summoning",
+        noun: "Summoning"
+    },
+    "Wither": {
+        present: "Withering",
+        noun: "Withering"
+    }
+}
+
+const randomElementOrVerb = function () {
+    let table = Math.random() < 0.5 ? ELEMENTS : VERBS;
+    let result = table[Math.floor(Math.random() * table.length)];
+    if (table === VERBS) result = VERBS_ALTERNATE[result].present;
+    return result;
+}
+
+export const ROGUE_TRICKS = [
+    "Caltrops",
+    "Lockpicks",
+    "Chameleon cloak",
+    `${randomElementOrVerb()} ammunition`,
+    "Climbing gear",
+    `${randomElementOrVerb()} blackjack`,
+    "Counterfeit coins",
+    `${randomElementOrVerb()} knife`,
+    "Fake mustache",
+    "Smoke bomb",
+    "Living rope",
+    "Vial of poison"
+];
+
+export const RUNES = {
+    "a": "ᚨ",
+    "b": "ᛒ",
+    "c": "ᛉ",
+    "d": "ᛞ",
+    "e": "ᛖ",
+    "f": "ᚠ",
+    "g": "ᚷ",
+    "h": "ᚺ",
+    "i": "ᛁ",
+    "j": "ᛃ",
+    "k": "ᚲ",
+    "l": "ᛚ",
+    "m": "ᛗ",
+    "n": "ᚾ",
+    "o": "ᛟ",
+    "p": "ᛈ",
+    "q": "ᛇ",
+    "r": "ᚱ",
+    "s": "ᛊ",
+    "t": "ᛏ",
+    "u": "ᚢ",
+    "v": "ᚦ",
+    "w": "ᚹ",
+    "x": "ᛜ",
+    "y": "ᛇ",
+    "z": "ᛉ"
+}
 
 export const GRIMDARK_FIRST_NAMES = {
     "male": [
@@ -2432,6 +2615,7 @@ export const WHIMSICAL_LAST_NAMES = {
         "ball",
         "bee",
         "bird",
+        "bog",
         "bottle",
         "bug",
         "critter",
@@ -2443,15 +2627,14 @@ export const WHIMSICAL_LAST_NAMES = {
         "fish",
         "fly",
         "hedge",
+        "hopper",
         "jack",
         "jangle",
-        "king",
         "kit",
         "lake",
         "moon",
         "mouse",
         "pail",
-        "queen",
         "root",
         "slink",
         "slip",
@@ -2466,4 +2649,37 @@ export const WHIMSICAL_LAST_NAMES = {
         "wood",
         "wort"
     ]
+}
+
+export const MAGIC_ITEM_TYPES = [
+    "Healing Potion",
+    [ELEMENTS, EQUIPMENT],
+    [VERBS_ALTERNATE, EQUIPMENT],
+    [ELEMENTS, TRINKETS],
+    [VERBS_ALTERNATE, TRINKETS],
+    [ELEMENTS, ALL_WEAPONS],
+    [VERBS_ALTERNATE, ALL_WEAPONS],
+    [ELEMENTS, ALL_WEAPONS],
+    [VERBS_ALTERNATE, ALL_WEAPONS],
+    [TRINKETS, VERBS_ALTERNATE, ELEMENTS],
+    [TRINKETS, VERBS_ALTERNATE, FORMS],
+    [TRINKETS, ELEMENTS, FORMS]
+]
+
+export const randomMagicItem = function(arr) {
+    let itemType = (arr ? arr : MAGIC_ITEM_TYPES[Math.floor(Math.random() * MAGIC_ITEM_TYPES.length)]);
+    if (typeof itemType === "string") return itemType;
+    let string = "";
+    itemType.forEach((table, i) => {
+        if (i !== 0) string += " ";
+        if (itemType.length === 3 && i === 1) string += "of ";
+        if (table === VERBS_ALTERNATE) {
+            string += table.present;
+        } else if (typeof table === "string") {
+            string += table;
+        } else {
+            string += table;
+        }
+    });
+    return { name: string, itemType: "Magic Item"}
 }

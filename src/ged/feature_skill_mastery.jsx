@@ -2,6 +2,7 @@ import React from 'react';
 import * as tables from './ged-tables';
 import CharacterFeature from './character_feature';
 import Button from 'react-bootstrap/Button'
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -41,7 +42,7 @@ class FeatureSkillMastery extends CharacterFeature {
         }
         return (<>
             <h3>{upgrade ? this.props.feature.upgrade.mastery : this.props.feature.mastery}</h3>
-            <Row xs={1} sm={2}>
+            <Row xs={1} sm={components.length > 0 ? 2 : 1}>
                 <Col>
                     <div>{mastery.description}</div>
                     <ul>
@@ -96,7 +97,7 @@ class FeatureSkillMastery extends CharacterFeature {
         }
         return (
             <Dropdown>
-                <Dropdown.Toggle variant="light">{source.mastery ? source.mastery : "Choose a Mastery from your Trained Skill"}</Dropdown.Toggle>
+                <Dropdown.Toggle variant="light">{source.mastery ? "Change Mastery" : "Choose a Mastery from your Trained Skill"}</Dropdown.Toggle>
                 <Dropdown.Menu>
                     {masteries.map((mastery, i) => {
                         return (
@@ -142,10 +143,12 @@ class FeatureSkillMastery extends CharacterFeature {
         const beastType = Math.floor(Math.random() * tables.BEAST_TYPES.length);
         const table1 = this.props.getTable(tables.BEAST_TYPES[beastType][0]);
         const table2 = this.props.getTable(tables.BEAST_TYPES[beastType][1]);
-        let beastString = table1[Math.floor(Math.random() * table1.length)];
+        let beastString;
         if (beastType === 0) {
-            beastString = beastString + " " + table2[Math.floor(Math.random() * table2.length)];
+            beastString = tables.ELEMENT_ADJECTIVES[table1[Math.floor(Math.random() * table1.length)]];
+            beastString += " " + table2[Math.floor(Math.random() * table2.length)];
         } else {
+            beastString = table1[Math.floor(Math.random() * table1.length)]
             beastString += ` with ${table2[Math.floor(Math.random() * table2.length)]} feature`;
         }
         return beastString;
@@ -181,22 +184,24 @@ class FeatureSkillMastery extends CharacterFeature {
             const activeBeast = source.menagerie.find(beast => !beast.inOrb)
             return (
                 <>
+                <div className="feature-comp-box">
                 <h3>Active Beast</h3>
                 {activeBeast ? 
                     this.beastComp(activeBeast, source.menagerie.indexOf(activeBeast), upgrade)
                     :
                     <div>None</div>
                 }
-                <h3>Menagerie</h3>
-                <ul>
+                </div>
+                <div><h3 style={{textAlign: "center"}}>Menagerie</h3></div>
+                <div>
                     {source.menagerie.filter(beast => beast.inOrb).map((beast, i) => {
                         return (
-                            <li key={i}>
+                            <div className="feature-comp-box" key={i}>
                                 {this.beastComp(beast, i, upgrade)}
-                            </li>
+                            </div>
                         )
                     })}
-                </ul>
+                </div>
                 <Form>
                     <Form.Label className="grenze">Add New Beast</Form.Label>
                     <Form.Control type="text" onChange={(e) => this.changeNewBeastType(e)} placeholder="Beast Type" value={this.state.customBeast} />
@@ -204,7 +209,6 @@ class FeatureSkillMastery extends CharacterFeature {
                 </Form>
                 </>
             )
-            //Include add beast form + button
         }
     }
 
@@ -217,11 +221,14 @@ class FeatureSkillMastery extends CharacterFeature {
     beastComp(beast, i, upgrade) {
         return (
         <>
+        <div>
         <Form>
             <Form.Control type="text" placeholder="Beast name" onChange={(e) => this.updateMenagerie("name", e.target.value, i, upgrade)} value={beast.name}></Form.Control>
         </Form>
-        <div className="grenze">{beast.beast}</div>
-        <InputGroup>
+        </div>
+        <div className="grenze" style={{textAlign: "center"}}>{beast.beast}</div>
+        <div>
+        <InputGroup style={{justifyContent: "center"}}>
             <InputGroup.Prepend>
                 <Button disabled={beast.stamina <= 0} variant="dark" onClick={() => this.updateMenagerie("stamina", beast.stamina - 1, i, upgrade)}>-</Button>
             </InputGroup.Prepend>
@@ -230,9 +237,12 @@ class FeatureSkillMastery extends CharacterFeature {
                 <Button disabled={beast.stamina >= 3} variant="light" onClick={() => this.updateMenagerie("stamina", beast.stamina - 1, i, upgrade)}>+</Button>
             </InputGroup.Append>
         </InputGroup>
-        <Button variant="outline-dark" onClick={beast.inOrb ? () => this.sendOut(i, upgrade) : () => this.updateMenagerie("inOrb", true, i, upgrade)}>{beast.inOrb ? "Send Out" : "Return to Orb"}</Button>
-        <Button variant="outline-warning" disabled={this.props.rerolls <= 0} onClick={() => this.updateMenagerie("beast", this.randomizeBeast(), i, upgrade, true)}>Reroll Beast</Button>
-        <Button variant="danger" onDoubleClick={() => this.updateMenagerie("delete", null, i, upgrade)}>Permanently Release (double tap)</Button>
+        </div>
+        <ButtonGroup>
+            <Button size="sm" variant="danger" onDoubleClick={() => this.updateMenagerie("delete", null, i, upgrade)}>Release (double tap)</Button>
+            <Button size="sm" variant="outline-warning" disabled={this.props.rerolls <= 0} onClick={() => this.updateMenagerie("beast", this.randomizeBeast(), i, upgrade, true)}>Reroll Beast</Button>
+            <Button size="sm" variant="outline-dark" onClick={beast.inOrb ? () => this.sendOut(i, upgrade) : () => this.updateMenagerie("inOrb", true, i, upgrade)}>{beast.inOrb ? "Send Out" : "Return to Orb"}</Button>
+        </ButtonGroup>
         </>
         )
     }

@@ -47,6 +47,7 @@ class CharacterFeature extends React.Component {
     setField(field, value) {
         let newState = Object.assign({}, this.props.feature);
         newState[field] = value;
+        if (field === "mastery") newState.currentSpecials = null;
         this.props.updateFeature(newState, this.props.index, false);
     }
 
@@ -352,8 +353,8 @@ class CharacterFeature extends React.Component {
     specialDisplayComp(specialType, special) {
         if (specialType === "Blessing") {
             const blessing = tables.BLESSINGS_INFO[special];
-            return <Dropdown>
-                <Dropdown.Toggle variant="light"><strong>{special} - {blessing.skill}</strong></Dropdown.Toggle>
+            return <Dropdown className="w-75">
+                <Dropdown.Toggle className="w-100" variant="light"><strong>{special} - {blessing.skill}</strong></Dropdown.Toggle>
                 <Dropdown.Menu>
                     <Dropdown.Item className="long-text-button">{blessing.description}</Dropdown.Item>
                     <Dropdown.Item className="long-text-button"><span className="grenze">Good Deed: </span>{blessing.goodDeed}</Dropdown.Item>
@@ -361,14 +362,14 @@ class CharacterFeature extends React.Component {
                 </Dropdown.Menu>
             </Dropdown>
         } else if (specialType === "Song") {
-            return <Dropdown>
-                        <Dropdown.Toggle variant="light"><strong>{special}</strong></Dropdown.Toggle>
+            return <Dropdown className="w-75">
+                        <Dropdown.Toggle className="w-100" variant="light"><strong>{special}</strong></Dropdown.Toggle>
                         <Dropdown.Menu>
                         <Dropdown.Item className="long-text-button"><div>{tables.SONG_INFO[special]}</div></Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
         } else {
-            return <InputGroup.Text>{special}</InputGroup.Text>
+            return <InputGroup.Text className="w-75">{special}</InputGroup.Text>
         }
     }
 

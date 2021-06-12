@@ -3,6 +3,8 @@ import * as tables from './ged-tables';
 import CharacterFeature from './character_feature';
 import Button from 'react-bootstrap/Button'
 import Dropdown from 'react-bootstrap/Dropdown';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 class FeatureFightingStyle extends CharacterFeature {    
     titleComp() {
@@ -64,7 +66,11 @@ class FeatureFightingStyle extends CharacterFeature {
                 </Dropdown.Menu>
             </Dropdown>
         )
-        return comps;
+        return (
+            <Col>
+                {comps}
+            </Col>
+        )
     }
 
     rerollButtons() {
@@ -76,11 +82,13 @@ class FeatureFightingStyle extends CharacterFeature {
             return <></>
         } else {
             return (
-                <>
+                <Row xs={1} sm={this.props.feature.upgrade ? 2 : 1}>
+                    <Col>
                     {this.combatSkillComp()}
                     {this.styleBonusComp()}
+                    </Col>
                     {this.upgradeComp()}
-                </>
+                </Row>
             )
         }
     }
