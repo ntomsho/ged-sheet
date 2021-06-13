@@ -90,7 +90,7 @@ class Inventory extends React.Component {
             case "Fighting Style":
                 return [
                     [{ title: "Heavy Melee Weapon", table: tables.WEAPONS["Heavy Melee"], itemType: "Heavy Melee Weapon" }, { title: "Light Melee Weapon", table: tables.WEAPONS["Light Melee"], itemType: "Light Melee Weapon" }, { title: "Ranged Weapon", table: tables.WEAPONS["Ranged"], itemType: "Ranged Weapon" }, { title: "Thrown Weapon", table: tables.WEAPONS["Thrown"], itemType: "Thrown Weapon"}],
-                    [{ name: "Armor", worn: false, itemType: "Armor" }, { name: "Shield", itemType: "Equipment" }, { title: "Light Melee Weapon", table: tables.WEAPONS["Light Melee"], itemType: "Light Melee Weapon" }, { name: "Spare ammunition", itemType: "Equipment"}]
+                    [{ name: "Armor", worn: false, itemType: "Armor", armor: 3 }, { name: "Shield", itemType: "Equipment" }, { title: "Light Melee Weapon", table: tables.WEAPONS["Light Melee"], itemType: "Light Melee Weapon" }, { name: "Spare ammunition", itemType: "Equipment"}]
                 ]
             case "Magic Artifact":
                 let artifact;
@@ -203,7 +203,7 @@ class Inventory extends React.Component {
                 newInv[i].worn = false;
             }
         }
-        this.props.updateInventory(newInv);
+        this.props.updateInventory(newInv, newInv[itemIndex]);
     }
 
     getImage(itemType) {

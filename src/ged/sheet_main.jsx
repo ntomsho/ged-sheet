@@ -13,7 +13,6 @@ import Advancement from './advancement';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
 import Accordion from 'react-bootstrap/Accordion';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
@@ -44,6 +43,7 @@ class CharSheet extends React.Component {
                 },
                 derpPoints: 1,
                 inventory: null,
+                equippedArmor: null,
                 conditions: [],
                 dead: false
             }
@@ -124,13 +124,16 @@ class CharSheet extends React.Component {
         let noHealth = false;
         let health = 6 + this.state.level;
         let armor = 0;
-        if (newState.inventory) {
-            newState.inventory.forEach(item => {
-                if (item.armor && item.worn) {
-                    armor = item.armor;
-                }
-            });
+        if (newState.equippedArmor) {
+            armor = newState.equippedArmor.armor;
         }
+        // if (newState.inventory) {
+        //     newState.inventory.forEach(item => {
+        //         if (item.armor && item.worn) {
+        //             armor = item.armor;
+        //         }
+        //     });
+        // }
         newState.features.forEach(feature => {
             if (feature === null) return;
             const sources = [feature, feature.dropdownChoice, feature.upgrade];
@@ -340,9 +343,12 @@ class CharSheet extends React.Component {
         this.saveState(newState);
     }
 
-    updateInventory(newInv) {
+    updateInventory(newInv, newArmor) {
         let newState = Object.assign({}, this.state);
         newState.inventory = newInv;
+        if (newArmor) {
+            newState.equippedArmor = newArmor;
+        }
         this.saveState(this.calculateHealthAndArmor(newState));
     }
 

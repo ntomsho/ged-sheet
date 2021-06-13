@@ -119,7 +119,7 @@ class FeatureMagicArtifact extends CharacterFeature {
                     <div>
                         <h3 style={{textAlign: "center"}}>{this.props.feature.artifact}</h3>
                     </div>
-                    <Row xs={1} sm={2}>
+                    <Row xs={1} sm={components.length > 0 ? 2 : 1}>
                         <Col>
                             {
                                 this.props.feature.artifactType === "Magic Weapon" && this.props.feature.weapon ?
@@ -129,9 +129,12 @@ class FeatureMagicArtifact extends CharacterFeature {
                             }
                             {this.artifactComp(featureObj)}
                         </Col>
+                        {components.length > 0 ?
                         <Col>
                             {components}
-                        </Col>
+                        </Col> :
+                        <></>
+                        }
                     </Row>
                 </div>
             )
