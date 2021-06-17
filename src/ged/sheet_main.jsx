@@ -8,6 +8,7 @@ import FeatureSkillMastery from './feature_skill_mastery';
 import FeatureSpecialAncestry from './feature_special_ancestry';
 import FeatureWordsOfPower from './feature_words_of_power';
 import RulesModal from './rules_modal';
+import DiceRoller from './dice_roller';
 import Skills from './skills';
 import Inventory from './inventory';
 import Advancement from './advancement';
@@ -536,7 +537,8 @@ class CharSheet extends React.Component {
                         {/* <Button style={{justifySelf: "flex-start"}}>Rules</Button> */}
                         <RulesModal />
                         <div style={{ justifySelf: "center" }} className="grenze">GED</div>
-                        <Button style={{ justifySelf: "flex-end" }}>Dice</Button>
+                        {/* <Button style={{ justifySelf: "flex-end" }}>Dice</Button> */}
+                        <DiceRoller />
                     </Container>
                 </Navbar>
                 <Row className="justify-content-center mt-5">

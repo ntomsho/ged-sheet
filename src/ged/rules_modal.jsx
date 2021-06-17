@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import * as tables from './ged-tables';
 import Modal from 'react-bootstrap/Modal';
-import { Card, Dropdown, Row, Col, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
 const RulesModal = (props) => {
     const [showModal, setShowModal] = useState(false);
