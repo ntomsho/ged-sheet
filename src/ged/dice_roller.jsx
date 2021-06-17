@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
+import Shake from 'shake.js'
 
 export default function DiceRoller(props) {
     //Selection variables
@@ -23,6 +24,13 @@ export default function DiceRoller(props) {
         "Magic",
         "Circumstance"
     ]
+
+    const shakeHandler = new Shake({
+        threshold: 15,
+        timeout: 2000
+    });
+    shakeHandler.start();
+    window.addEventListener('shake', rollDice, false);
 
     useEffect(() => {
         setDisadvantage(difficulty > numDice() ? true : false);
