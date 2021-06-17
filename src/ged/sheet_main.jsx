@@ -7,6 +7,7 @@ import FeatureMagicArtifact from './feature_magic_artifact';
 import FeatureSkillMastery from './feature_skill_mastery';
 import FeatureSpecialAncestry from './feature_special_ancestry';
 import FeatureWordsOfPower from './feature_words_of_power';
+import RulesModal from './rules_modal';
 import Skills from './skills';
 import Inventory from './inventory';
 import Advancement from './advancement';
@@ -16,6 +17,8 @@ import Col from 'react-bootstrap/Col';
 import Accordion from 'react-bootstrap/Accordion';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image';
+import Alert from 'react-bootstrap/Alert';
+import Navbar from 'react-bootstrap/Navbar';
 
 class CharSheet extends React.Component {
     constructor (props) {
@@ -104,9 +107,9 @@ class CharSheet extends React.Component {
             if (feature.currentSpecials) {
                 feature.currentSpecials.forEach((special) => {
                     if (special.refreshOn === "rest") {
-                        special.specials = this.returnRefreshedSpecials(special.specialType, special.specials.length, special.favoriteSpecial);
+                        special.specials = this.returnRefreshedSpecials(special.specialType, special.num, special.favoriteSpecial);
                     }
-                })
+                });
             }
             if (feature.ancestries) {
                 feature.ancestries.forEach((ancestry, i) => {
@@ -256,13 +259,27 @@ class CharSheet extends React.Component {
         let newState = Object.assign({}, this.state);
         newState.derpPoints = this.state.derpPoints === num ? num - 1 : num;
         this.saveState(newState);
-        // this.updateState('plotPoints', this.charSource().plotPoints === num ? num - 1 : num);
+    }
+
+    calculateDerpPoints() {
+        let dp = 1;
+        this.state.features.forEach(feature => {
+            if (feature === null) return;
+            if (feature.mastery) {
+                const mastery = tables.SKILL_MASTERIES[feature.trainedSkill][feature.mastery]
+                dp = mastery.startingDerp;
+                if (feature.upgrade && mastery.upgrade.startingDerp) {
+                    dp = mastery.upgrade.startingDerp;
+                }
+            }
+        });
+        return 2 + dp;
     }
 
     plotPointsTrackerDisp() {
-        //calculateDerpPoints()
+        let max = this.calculateDerpPoints();
         const pp = [];
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < max; i++) {
             pp.push(
                 <Col lg={2} md={3} xs={4} key={i} className="plot-point d-flex justify-content-center align-items-center" onClick={() => this.updatePlotPoints(i + 1)}>
                     <h1 key={i} id={`pp-${i + 1}`}
@@ -292,7 +309,7 @@ class CharSheet extends React.Component {
         if (newState.inventory) {
             let artifacts = {};
             newState.features.forEach((feature, i) => {
-                if (feature.artifact) {
+                if (feature && feature.artifact) {
                     artifacts[feature.artifact] = {index: i, present: false};
                 }
             });
@@ -323,8 +340,6 @@ class CharSheet extends React.Component {
                 }
             });
             return newState;
-            // let artifacts = newState.features.map(feature => feature.artifact).filter(ele => !!ele);
-            // newState.inventory = newState.inventory.filter(item => !item.featureReq || artifacts.includes(item.featureReq));
         }
     }
 
@@ -364,25 +379,51 @@ class CharSheet extends React.Component {
         this.saveState(newState);
     }
 
+    upgradeAvailable() {
+        let chosenFeatures = 0;
+        let openFeatures = 0;
+        for (let i = 0; i < this.state.features.length; i++) {
+            if (this.state.features[i]) {
+                chosenFeatures++;
+            } else {
+                openFeatures++;
+            }
+        }
+        return (chosenFeatures >= 2 && openFeatures > 0);
+    }
+
+    upgradeMe(index) {
+        let newState = Object.assign({}, this.state);
+        for (let i = 0; i < newState.features.length; i++) {
+            if (!newState.features[i]) {
+                newState.features.splice(i, 1);
+                newState.features[index].upgrade = {};
+                break;
+            }
+        }
+        this.saveState(newState);
+    }
+
     populateFeatures() {
         let features = [];
+        let upgradeAvailable = this.upgradeAvailable();
         for (let i = 0; i < this.state.features.length; i++) {
             if (this.state.features[i]) {
                 switch (this.state.features[i].feature) {
                     case "Fighting Style":
-                        features[i] = [<FeatureFightingStyle index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureFightingStyle index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Magic Artifact":
-                        features[i] = [<FeatureMagicArtifact index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureMagicArtifact index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Skill Mastery":
-                        features[i] = [<FeatureSkillMastery index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} bonusSkill={this.state.bonusSkill} updateSkill={this.updateSkill} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureSkillMastery index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} bonusSkill={this.state.bonusSkill} updateSkill={this.updateSkill} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Special Ancestry":
-                        features[i] = [<FeatureSpecialAncestry index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureSpecialAncestry index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Words of Power":
-                        features[i] = [<FeatureWordsOfPower index={i} key={i} rerolls={this.state.rerolls} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureWordsOfPower index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                 }
             } else {
                 features[i] = <Button block className="random-button" key={i} disabled={this.state.rerolls <= 0 && this.state.features[i]} getTable={this.getTable.bind(this)} variant="outline-dark" onClick={() => this.randomize("feature_" + i)}>Roll Character Feature</Button>
@@ -438,7 +479,10 @@ class CharSheet extends React.Component {
             case "appearance": return tables.APPEARANCES
             case "derp": return tables.DERPS
             case "feature_0":
-            case "feature_1": return tables.CHARACTER_FEATURES
+            case "feature_1": 
+            case "feature_2":
+            case "feature_3":
+            case "feature_4": return tables.CHARACTER_FEATURES
             case "bonusSkill": return tables.CIVILIZED_SKILLS
             case "weapon":
                 const weaponType = tables.WEAPON_TYPES[Math.floor(Math.random() * tables.WEAPON_TYPES.length)]
@@ -487,14 +531,24 @@ class CharSheet extends React.Component {
     render() {
         return (
             <Container className="bg-light">
-                <Row className="justify-content-center">
+                <Navbar bg="light" fixed="top">
+                    <Container>
+                        {/* <Button style={{justifySelf: "flex-start"}}>Rules</Button> */}
+                        <RulesModal />
+                        <div style={{ justifySelf: "center" }} className="grenze">GED</div>
+                        <Button style={{ justifySelf: "flex-end" }}>Dice</Button>
+                    </Container>
+                </Navbar>
+                <Row className="justify-content-center mt-5">
                     <h1 className="text-center ged-color mb-0">GED:</h1>
                 </Row>
                 <Row className="justify-content-center">
                     <h1 className="text-center ged-color">Guild of Expendable Dungeoneers</h1>
                 </Row>
                 <Row>
-                    <div>This sheet saves your character state in the URL. To save your character, copy or bookmark the URL and come back to it to pick up where you left off.</div>
+                    <Col>
+                    <Alert variant="info" className="grenze">This sheet saves your character state in the URL. To save your character, copy or bookmark the URL and come back to it to pick up where you left off.</Alert>
+                    </Col>
                 </Row>
                 <Row className="justify-content-center">
                     {this.rerollTracker()}
@@ -549,7 +603,7 @@ class CharSheet extends React.Component {
                     <Inventory inventory={this.state.inventory} features={this.state.features} updateInventory={this.updateInventory} rerolls={this.state.rerolls} useReroll={this.useReroll} />
                 </Row>
                 <Row className="mb-5">
-                    <Advancement experience={this.state.experience} level={this.state.level} updateExperience={this.updateExperience} levelUp={this.levelUp} />
+                    <Advancement upgradeAvailable={this.upgradeAvailable()} experience={this.state.experience} level={this.state.level} updateExperience={this.updateExperience} levelUp={this.levelUp} />
                 </Row>
             </Container>
         )

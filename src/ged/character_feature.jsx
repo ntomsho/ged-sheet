@@ -247,7 +247,7 @@ class CharacterFeature extends React.Component {
                 if (special.favoriteSpecial) {
                     specialSelects.push(special)
                 }
-            })
+            });
             if (specialSelects.length > 0) {
                 return (<div>
                     {specialRefresh.map((special, i) => this.selectFavoriteSpecialComp(special, i, upgrade))}
@@ -269,6 +269,7 @@ class CharacterFeature extends React.Component {
                             currentSpecials.push({
                                 specialType: special.specialType,
                                 specials: newSpecials,
+                                num: special.number,
                                 refreshOn: special.refreshOn
                             });
                         });
@@ -279,7 +280,7 @@ class CharacterFeature extends React.Component {
         }
         let specialComps = [];
         source.currentSpecials.forEach((special, i) => {
-            let thisComp = [];
+            let thisComp = [<div className="grenze">{special.specialType}{special.specialType === "Ammo" ? "" : "s"}</div>];
             for (let j = 0; j < special.specials.length; j++) {
                 if (special.specials[j]) {
                     thisComp.push(
@@ -312,18 +313,18 @@ class CharacterFeature extends React.Component {
                 <Form>
                     <InputGroup>
                         {/* <InputGroup.Prepend><InputGroup.Text>Replace with Custom {special.specialType}</InputGroup.Text></InputGroup.Prepend> */}
-                        <Form.Control type="text" value={this.state[`customSpecial_${i}`]} onChange={(e) => this.updateCustomSpecial(e, i, upgrade)} />
-                        <InputGroup.Append><Button variant="info" onClick={() => this.addCustomSpecial(i,this.state[`customSpecial_${i}`], upgrade)}>Add custom {special.specialType}</Button></InputGroup.Append>
+                        <Form.Control className="w-50" type="text" value={this.state[`customSpecial_${i}`]} onChange={(e) => this.updateCustomSpecial(e, i, upgrade)} />
+                        <InputGroup.Append className="w-50"><Button style={{fontSize: "min(3vw,14px)"}} variant="info" onClick={() => this.addCustomSpecial(i,this.state[`customSpecial_${i}`], upgrade)}>Add custom {special.specialType}</Button></InputGroup.Append>
                     </InputGroup>
                 </Form>
             );
             if (special.refreshOn === "resupply") {
                 thisComp.push(
-                    <Button variant="dark" onClick={() => this.refreshSpecial(specialRefresh, i, upgrade)}>Resupply</Button>
+                    <Button variant="dark" onClick={() => this.refreshSpecial(source.currentSpecials, i, upgrade)}>Resupply</Button>
                 )
             }
             specialComps.push(
-                <div key={i}>
+                <div key={i} className="feature-comp-box">
                     {thisComp}
                 </div>
             );
@@ -334,10 +335,11 @@ class CharacterFeature extends React.Component {
     refreshSpecial(currentSpecials, specialIndex, upgrade, returnValue) {
         let newSpecials = Object.assign([], currentSpecials);
         let refreshSpecials = [];
+        debugger
         if (currentSpecials[specialIndex].specialType === "Bases") {
             refreshSpecials = Object.assign([], tables.ALCHEMICAL_BASES);
         } else {
-            for (let i = 0; i < currentSpecials[specialIndex].number; i++) {
+            for (let i = 0; i < currentSpecials[specialIndex].num; i++) {
                 const table = this.props.getTable(currentSpecials[specialIndex].specialType);
                 refreshSpecials.push(table[Math.floor(Math.random() * table.length)]);
             }
@@ -354,12 +356,14 @@ class CharacterFeature extends React.Component {
         if (specialType === "Blessing") {
             const blessing = tables.BLESSINGS_INFO[special];
             return <Dropdown className="w-75">
-                <Dropdown.Toggle className="w-100" variant="light"><strong>{special} - {blessing.skill}</strong></Dropdown.Toggle>
+                <Dropdown.Toggle className="w-100" style={{whiteSpace: "normal"}} variant="light"><strong>{special}{blessing ? ` - ${blessing.skill}` : ""}</strong></Dropdown.Toggle>
+                {blessing ?
                 <Dropdown.Menu>
                     <Dropdown.Item className="long-text-button">{blessing.description}</Dropdown.Item>
                     <Dropdown.Item className="long-text-button"><span className="grenze">Good Deed: </span>{blessing.goodDeed}</Dropdown.Item>
                     <Dropdown.Item className="long-text-button"><span className="grenze">Upgraded: </span>{blessing.upgrade}</Dropdown.Item>
-                </Dropdown.Menu>
+                </Dropdown.Menu> :
+                <></>}
             </Dropdown>
         } else if (specialType === "Song") {
             return <Dropdown className="w-75">
@@ -418,14 +422,17 @@ class CharacterFeature extends React.Component {
                         {this.featureComp()}
                     </Card.Body>
                     <Card.Footer>
-                        <ButtonGroup style={{display: "flex", justifyContent: "space-around"}}>
-                            {this.rerollButtons ? this.rerollButtons() : null}
-                            {this.props.feature.upgrade ? 
-                                <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.removeUpgrade}>Reroll Upgrade as New Feature</Button>
-                                :
-                                <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.rerollFeature}>Reroll Character Feature</Button>
-                            }
-                        </ButtonGroup>
+                        {this.rerollButtons ? this.rerollButtons() : null}
+                        {this.props.feature && this.props.feature.feature !== "Magic Artifact" && !this.props.feature.upgrade && this.props.upgradeAvailable ?
+                            <Button block className="random-button" variant="info" onClick={this.props.upgradeMe}>Upgrade Feature</Button>
+                            :
+                            <></>
+                        }
+                        {this.props.feature.upgrade ? 
+                            <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.removeUpgrade}>Reroll Upgrade as New Feature</Button>
+                            :
+                            <Button block className="random-button" disabled={this.props.rerolls <= 0} variant="outline-warning" onClick={this.props.rerollFeature}>Reroll Character Feature</Button>
+                        }
                     </Card.Footer>
                     </Card>
                 </Accordion.Collapse>

@@ -94,6 +94,10 @@ h1, h2, h3 {
     cursor: pointer;
 }
 
+.inventory-button {
+    font-size: min(14px, 3vw)
+}
+
 .long-text-button{
   width: 100%;
   white-space: normal;
@@ -109,6 +113,14 @@ h1, h2, h3 {
 
 .remaining-skills-row {
     height: 136px;
+}
+
+.rules-modal-result-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    width: 85%;
+    border: 1px solid black;
 }
 
 .session-form-box {

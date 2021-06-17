@@ -61,13 +61,17 @@ class Inventory extends React.Component {
     itemSelectButton(item, choiceSet, setIndex) {
         if (item.table) {
             return (
-                <div key={`${setIndex}_${choiceSet}`}>
-                <Button variant={this.state.startingEquipmentChoicesMade[choiceSet] === setIndex ? "secondary" : "outline-secondary"} onClick={() => this.selectChoice(choiceSet, setIndex)}>{item.name ? item.name : item.title}</Button>
-                <Button variant={item.name ? "outline-warning" : "outline-dark"} onClick={() => this.randomizeChoice(choiceSet, setIndex, item.table)}>{item.name ? "Reroll" : "Roll"} Item</Button>
+                <div key={`${setIndex}_${choiceSet}`} style={{display: "flex", flexDirection: "column"}}>
+                    <Button variant={this.state.startingEquipmentChoicesMade[choiceSet] === setIndex ? "secondary" : "outline-secondary"} onClick={() => this.selectChoice(choiceSet, setIndex)}>{item.name ? item.name : item.title}</Button>
+                    <Button variant={item.name ? "outline-warning" : "outline-dark"} onClick={() => this.randomizeChoice(choiceSet, setIndex, item.table)}>{item.name ? "Reroll" : "Roll"} Item</Button>
                 </div>
             )
         } else {
-            return <div key={`${setIndex}_${choiceSet}`}><Button variant={this.state.startingEquipmentChoicesMade[choiceSet] === setIndex ? "secondary" : "outline-secondary"} onClick={() => this.selectChoice(choiceSet, setIndex)}>{item.name}</Button></div>
+            return (
+                <div key={`${setIndex}_${choiceSet}`} style={{ display: "flex", flexDirection: "column" }}>
+                    <Button variant={this.state.startingEquipmentChoicesMade[choiceSet] === setIndex ? "secondary" : "outline-secondary"} onClick={() => this.selectChoice(choiceSet, setIndex)}>{item.name}</Button>
+                </div>
+            )
         }
     }
 
@@ -139,21 +143,24 @@ class Inventory extends React.Component {
         {this.state.startingEquipmentChoices.map((choiceSet, i) => {
             return (
                 <>
-                <Row>
+                <Row xs={2} sm={3} md={4} className="mt-3 mb-3">
                     {choiceSet.map((choice, j) => {
                         return (
-                            <Col key={`${i}_${j}`} xs={12 / choiceSet.length}>
+                            <Col key={`${i}_${j}`}>
                                 {this.itemSelectButton(choice, i, j)}
                             </Col>
                         )
                     })}
                 </Row>
+                {i < this.state.startingEquipmentChoices.length - 1 ?
+                <div style={{ width: "100%", height: "2px", border: "1px solid black"}} /> :
+                <></>}
                 </>
             )
         })}
         {this.state.startingEquipmentChoicesMade.every(choice => choice !== null) ?
         <Row>
-            <Col className="justify-content-center" style={{ display: "flex" }}>
+            <Col className="justify-content-center mt-3" style={{ display: "flex" }}>
                 <Button block variant="primary" onClick={this.acceptStartingEquipment}>Accept</Button>
             </Col>
         </Row> :
@@ -185,7 +192,7 @@ class Inventory extends React.Component {
         }
         if (itemType === "Armor") {
             newItemObj.worn = false;
-            newItemObj.armor = num || 0;
+            newItemObj.armor = num;
         }
         if (itemType === "Cash Money") {
             newItemObj.name = "Cash Money";
@@ -226,19 +233,27 @@ class Inventory extends React.Component {
     itemComp(item, itemIndex) {
         let comps = [];
 
-        if (item.itemType === "Armor" || item.armor) {
+        if (item.itemType === "Armor" && item.armor === undefined) {
             let armorLevels = [];
             for (let i = 1; i <= 7; i++) {
                 armorLevels.push(<Dropdown.Item onClick={() => this.changeItem("armor", i, itemIndex)}>{i}</Dropdown.Item>);
             }
-            comps.push(
-                <Button variant="outline-light" onClick={() => item.worn ? this.changeItem("worn", false, itemIndex) : this.equipArmor(itemIndex)}>{item.worn ? "Unequip" : "Equip"}</Button>,
+            comps.push(       
                 <Dropdown>
-                    <Dropdown.Toggle variant="light">Armor: {item.armor}</Dropdown.Toggle>
+                    <Dropdown.Toggle className="inventory-button" variant="light">Set Armor</Dropdown.Toggle>
                     <Dropdown.Menu>
                         {armorLevels}
                     </Dropdown.Menu>
                 </Dropdown>
+            )
+        }
+
+        if (typeof item.armor === "number") {
+            comps.push(
+                <div style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                    <Button className="inventory-button" variant="outline-light" size="sm" onClick={() => item.worn ? this.changeItem("worn", false, itemIndex) : this.equipArmor(itemIndex)}>{item.worn ? "Unequip" : "Equip"}</Button>
+                    <div className="grenze" style={{whiteSpace: "nowrap"}}>Armor <strong>{item.armor}</strong></div>
+                </div>
             )
         }
 
@@ -249,7 +264,7 @@ class Inventory extends React.Component {
             }
             comps.push(
                 <Dropdown>
-                    <Dropdown.Toggle variant="light">Value: {item.value}</Dropdown.Toggle>
+                    <Dropdown.Toggle className="inventory-button" variant="light">Value: {item.value}</Dropdown.Toggle>
                     <Dropdown.Menu>
                         {valueLevels}
                     </Dropdown.Menu>
@@ -262,7 +277,7 @@ class Inventory extends React.Component {
             weaponTypes = weaponTypes.map(wt => <Dropdown.Item onClick={() => this.changeItem("itemType", wt, itemIndex)}>{wt}</Dropdown.Item>)
             comps.push(
                 <Dropdown>
-                    <Dropdown.Toggle variant="light">Weapon Type</Dropdown.Toggle>
+                    <Dropdown.Toggle className="inventory-button" variant="light">Weapon Type</Dropdown.Toggle>
                     <Dropdown.Menu>
                         {weaponTypes}
                     </Dropdown.Menu>
@@ -270,12 +285,6 @@ class Inventory extends React.Component {
             )
         }
 
-        comps.push(
-            <ButtonGroup>
-                <Button variant="outline-dark" text="dark" onClick={() => this.moveItem(false, itemIndex)}>{"<<"}</Button>
-                <Button variant="outline-dark" text="dark" onClick={() => this.moveItem(true, itemIndex)}>{">>"}</Button>
-            </ButtonGroup>
-        );
         if (item.itemType !== "Artifact") {
             comps.push(<Button className="corner-button" size="sm" variant="danger" onClick={() => this.discardItem(itemIndex)}>X</Button>);
         }
@@ -285,19 +294,23 @@ class Inventory extends React.Component {
             <Card bg={this.itemVariant(item.itemType)} text={this.itemVariant(item.itemType) === "light" ? "dark" : "light"}>
                 <Card.Img src={this.getImage(item.itemType)} alt="Card Image" />
                 <Card.ImgOverlay>
-                <Card.Body>
+                <Card.Body style={{padding: "1rem 0"}}>
                     <Card.Title>
                         <Form>
                             <Form.Control style={{fontSize: "0.75rem"}} type="text" placeholder={`Unnamed ${item.itemType}`} value={item.name} onChange={(e) => this.changeItem("name", e.target.value, itemIndex)} />
                         </Form>
                     </Card.Title>
-                    <Card.Subtitle style={{fontSize: "10px"}}>
+                    <Card.Subtitle style={{fontSize: "min(3vw, 12px)"}}>
                         {item.itemType}
                     </Card.Subtitle>
                     {comps.length > 0 ?
                     <Card.Text>{comps}</Card.Text>
                     :
                     <></>}
+                    <ButtonGroup style={{position: "absolute", left: "0%", bottom: "0%", maxHeight: "8vw"}} className="w-100">
+                        <Button style={{display: "flex", justifyContent: "center", alignItems: "center"}} className="w-50" variant="outline-dark" text="dark" onClick={() => this.moveItem(false, itemIndex)}>{"<<"}</Button>
+                        <Button style={{ display: "flex", justifyContent: "center", alignItems: "center" }} className="w-50" variant="outline-dark" text="dark" onClick={() => this.moveItem(true, itemIndex)}>{">>"}</Button>
+                    </ButtonGroup>
                 </Card.Body>
                 </Card.ImgOverlay>
             </Card>
@@ -355,7 +368,7 @@ class Inventory extends React.Component {
                         this.itemComp(item, i)
                     )})}
                 </Row>
-                <Form className="mt-4">
+                <ButtonGroup className="mt-4">
                     <Dropdown>
                         <Dropdown.Toggle>Add Item</Dropdown.Toggle>
                         <Dropdown.Menu>
@@ -368,11 +381,11 @@ class Inventory extends React.Component {
                             <Dropdown.Item as="button" variant="outline-light" onClick={() => this.addItem("Weapon")}>Add Weapon</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
-                </Form>
-                {this.props.inventory.filter(item => item.itemType === "Cash Money").length > 0 ?
-                <Button variant="outline-success" onClick={this.openShop}>Equipment Store</Button>
-                :
-                null}
+                    {this.props.inventory.filter(item => item.itemType === "Cash Money").length > 0 ?
+                    <Button variant="outline-success" onClick={this.openShop}>Equipment Store</Button>
+                    :
+                    null}
+                </ButtonGroup>
             </Card.Body>
         )
     }
@@ -390,6 +403,7 @@ class Inventory extends React.Component {
                 if (this.state.startingEquipmentChoices) {
                     comp = (<>
                     <h3>Choose Starting Equipment</h3>
+                    <div className="grenze">Select one item from each group.</div>
                     {this.startingEquipmentComp()}
                 </>)
                 } else {

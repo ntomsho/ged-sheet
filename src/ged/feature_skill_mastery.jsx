@@ -248,7 +248,7 @@ class FeatureSkillMastery extends CharacterFeature {
     }
 
     rerollButtons() {
-        return <Button className="random-button" disabled={this.props.rerolls <= 0 && this.props.feature.trainedSkill} variant={this.props.feature.trainedSkill ? "outline-warning" : "outline-dark"} onClick={() => this.randomize("trainedSkill")}>{this.props.feature.trainedSkill ? "Roll" : "Reroll"} Trained Skill</Button>
+        return <Button className="random-button" disabled={this.props.rerolls <= 0 && this.props.feature.trainedSkill} variant={this.props.feature.trainedSkill ? "outline-warning" : "outline-dark"} onClick={() => this.randomize("trainedSkill")}>{this.props.feature.trainedSkill ? "Reroll" : "Roll"} Trained Skill</Button>
     }
 
     featureComp() {

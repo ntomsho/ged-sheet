@@ -4,7 +4,7 @@ import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-import { Accordion, Dropdown, Card } from 'react-bootstrap';
+import { Accordion, Alert, Card } from 'react-bootstrap';
 
 class Advancement extends React.Component {
     constructor(props) {
@@ -52,6 +52,10 @@ class Advancement extends React.Component {
                             </Row>
                             {this.props.experience >= expToLevel ?
                                 <Button variant="primary" size="lg" onClick={this.props.levelUp}>LEVEL UP</Button> :
+                                <></>
+                            }
+                            {this.props.upgradeAvailable ?
+                                <Alert variant="info">You've leveled up! Your max Health has increased by one and you have a free Character Feature available. Tap the Roll Character Feature button above to learn a new Character Feature or tap the Upgrade Feature button in one of your existing features.</Alert>:
                                 <></>
                             }
                     </div>

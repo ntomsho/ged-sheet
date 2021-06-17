@@ -69,9 +69,7 @@ class FeatureMagicArtifact extends CharacterFeature {
         let comps = [];
         if (this.props.feature.artifactType === "Magic Weapon") {
             comps.push(
-                <>
-                    <Button className="random-button" variant={this.props.feature.weapon ? "outline-warning" : "outline-dark"} disabled={this.props.rerolls <= 0 && this.props.feature.weapon} onClick={() => this.randomize("weapon")}>{this.props.feature.weapon ? "Reroll" : "Roll"} Weapon Type</Button>
-                </>
+                <Button className="random-button" variant={this.props.feature.weapon ? "outline-warning" : "outline-dark"} disabled={this.props.rerolls <= 0 && this.props.feature.weapon} onClick={() => this.randomize("weapon")}>{this.props.feature.weapon ? "Reroll" : "Roll"} Weapon Type</Button>
             )
         }
         if (this.props.feature.artifactType) {
