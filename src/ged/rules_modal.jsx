@@ -11,9 +11,14 @@ const RulesModal = (props) => {
             <Button onClick={() => setShowModal(true)} style={{justifySelf: "flex-start"}}>Rules</Button>
             <Modal onClick={() => setShowModal(false)} size="lg" show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header style={{ justifyContent: "center" }}>
-                    <h2>Action Roll Reference Sheet</h2>
+                    <Modal.Title>
+                        <h2>Action Roll Reference Sheet</h2>
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body style={{display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center"}}>
+                    <div style={{color: "white", position: "absolute", top: "0", right: "0"}}>
+                        <Button variant="primary" size="sm" target="_blank" href="https://docs.google.com/document/d/1YLNNcbFF1TD_UTkQjW8wq__zK6axbH8-cqk5u1VM4Fw/edit?usp=sharing">Full Rules Document</Button>
+                    </div>
                     <div>Roll <strong>1d20 +</strong></div>
                     <div><strong>1d6</strong> per source of <strong>Advantage</strong></div>
                     <div><strong>-1d6</strong> per <strong>Difficulty</strong></div>
@@ -100,16 +105,15 @@ const RulesModal = (props) => {
                             <div className="grenze" style={{ textAlign: "center" }}><u>Threat</u></div>
                             <div style={{ fontSize: "12px" }}>‣Become Threatened as a Consequence</div>
                             <div style={{ fontSize: "12px" }}>‣Can add Difficulty to rolls</div>
-                            <div style={{ fontSize: "12px" }}>‣Rolls to escape Threat are Defense Rolls</div>
                             <div style={{ fontSize: "12px" }}>‣Take Serious Consequence on failed roll</div>
                         </div>  
                         <div style={{ display: "flex", flexDirection: "column", width: "50%" }}>
                             <div className="grenze" style={{ textAlign: "center" }}><u>Spells</u></div>
                             <div style={{ display: "flex", flexWrap: "wrap", fontSize:"12px", justifyContent: "space-between", width: "100%", textAlign: "start" }}>
-                                <div>‣Attack roll (enhanced damage)</div>
+                                <div>‣Attack roll (+ benefit)</div>
                                 <div>‣Standard damage (no roll)</div>
                                 <div>‣Critical on Defense Roll</div>
-                                <div>‣Create lasting advantage</div>
+                                <div>‣Create advantage</div>
                                 <div>‣Create hazard</div>
                                 <div>‣Heal someone (full)</div>
                                 <div>‣Misc</div>

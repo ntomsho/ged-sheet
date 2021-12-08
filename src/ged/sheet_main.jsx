@@ -108,7 +108,7 @@ class CharSheet extends React.Component {
             if (feature.currentSpecials) {
                 feature.currentSpecials.forEach((special) => {
                     if (special.refreshOn === "rest") {
-                        special.specials = this.returnRefreshedSpecials(special.specialType, special.num, special.favoriteSpecial);
+                        special.specials = this.returnRefreshedSpecials(special.specialType, special.specials.length, special.favoriteSpecial);
                     }
                 });
             }
