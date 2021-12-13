@@ -39,6 +39,7 @@ class Inventory extends React.Component {
             if (feature.feature === "Magic Artifact" && !feature.artifact) return;
             if (feature.feature === "Skill Mastery" && !feature.mastery) return;
             readyFeatures++;
+            if (feature.upgrade) readyFeatures++;
         })
         // if (this.props.features.some(feature => feature === null)) return false;
         // if (this.props.features.some(feature => feature.feature === "Magic Artifact" && !feature.artifact)) return false;
