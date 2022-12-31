@@ -29,7 +29,7 @@ class CharSheet extends React.Component {
         } else {
             this.state = {
                 level: 1,
-                rerolls: 10,
+                rerolls: 10000,
                 charName: "",
                 background: null,
                 appearance: null,
