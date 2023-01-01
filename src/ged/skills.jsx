@@ -80,26 +80,6 @@ class Skills extends React.Component {
                     <Button className="w-100" variant={trained ? "dark" : "outline-dark"}>
                         <div className="grenze" style={{fontSize: "2.75vw"}}><strong>{skill}</strong></div>
                     </Button>
-                {/* <Dropdown>
-                    <Dropdown.Toggle style={{border: "none", whiteSpace: "normal"}} className="w-100" key={index} variant={trained ? "dark" : "outline-dark"}>
-                        <div className="grenze"><strong>{skill}</strong></div>
-                        <Dropdown.Menu>
-                            <Dropdown.Item>{tables.SKILL_DESCRIPTIONS[skill].covers}</Dropdown.Item>
-                            {
-                                this.checkTrained(skill) ? 
-                                <Dropdown.Item><strong>You are trained in {skill}</strong></Dropdown.Item> :
-                                <Dropdown.Item>You are <strong>NOT</strong> trained in {skill}</Dropdown.Item>
-                            }
-                            <Dropdown.Divider />
-                            <Dropdown.Item>{skill} is used for:</Dropdown.Item>
-                            <ul>
-                                {tables.SKILL_DESCRIPTIONS[skill].usedFor.map((use, i) => {
-                                    return <Dropdown.Item key={i}><li>{use}</li></Dropdown.Item>
-                                })}
-                            </ul>
-                        </Dropdown.Menu>
-                    </Dropdown.Toggle>
-                </Dropdown> */}
                 </Card.Body>
                 </Card.ImgOverlay>
                 </Card>
@@ -122,17 +102,17 @@ class Skills extends React.Component {
                         <div style={{position: "relative", zIndex: 5}}>
                         <Row className="mt-2">
                             {tables.FIGHTING_SKILLS.map((skill, i) => {
-                                return this.skillBox(skill)
+                                return this.skillBox(skill, i)
                             })}
                         </Row>
                         <Row className="mt-2">
                             {tables.CIVILIZED_SKILLS.slice(0,3).map((skill, i) => {
-                                return this.skillBox(skill)
+                                return this.skillBox(skill, i)
                             })}
                         </Row>
                         <Row className="mt-2">
                             {tables.CIVILIZED_SKILLS.slice(3).map((skill, i) => {
-                                return this.skillBox(skill)
+                                return this.skillBox(skill, i)
                             })}
                         </Row>
                         <Row>

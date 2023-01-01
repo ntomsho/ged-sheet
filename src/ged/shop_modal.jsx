@@ -66,8 +66,8 @@ const ShopModal = (props) => {
             <Dropdown>
                 <Dropdown.Toggle variant="outline-dark" className="w-100" style={{ fontSize: "10px", whiteSpace: "normal", wordWrap: "normal" }}>{item.displayName ? item.displayName : item.name}</Dropdown.Toggle>
                 <Dropdown.Menu>
-                    {item.table.map(option => {
-                        return <Dropdown.Item onClick={() => item.setFunction(option)}>{option}</Dropdown.Item>
+                    {item.table.map((option, i) => {
+                        return <Dropdown.Item onClick={() => item.setFunction(option)} key={i}>{option}</Dropdown.Item>
                     })}
                 </Dropdown.Menu>
             </Dropdown>
@@ -86,7 +86,7 @@ const ShopModal = (props) => {
 
     function itemBox(item, index) {
         return (
-            <Col>
+            <Col key={index}>
             <Card bg={selections.includes(index) ? "primary" : "light"} text={selections.includes(index) ? "light" : "dark"} onClick={() => makeSelection(index)}>
                 <Card.Img src={props.getImage(item.itemType)} alt="Card Image" />
                 <Card.ImgOverlay>

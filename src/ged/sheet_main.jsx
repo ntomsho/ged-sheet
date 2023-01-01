@@ -412,22 +412,22 @@ class CharSheet extends React.Component {
             if (this.state.features[i]) {
                 switch (this.state.features[i].feature) {
                     case "Fighting Style":
-                        features[i] = [<FeatureFightingStyle index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureFightingStyle index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} getTable={this.getTable} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Magic Artifact":
-                        features[i] = [<FeatureMagicArtifact index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureMagicArtifact index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} getTable={this.getTable} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Skill Mastery":
-                        features[i] = [<FeatureSkillMastery index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} bonusSkill={this.state.bonusSkill} updateSkill={this.updateSkill} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureSkillMastery index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} bonusSkill={this.state.bonusSkill} updateSkill={this.updateSkill} getTable={this.getTable} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Special Ancestry":
-                        features[i] = [<FeatureSpecialAncestry index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureSpecialAncestry index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} getTable={this.getTable} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                         break;
                     case "Words of Power":
-                        features[i] = [<FeatureWordsOfPower index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} getTable={this.getTable.bind(this)} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
+                        features[i] = [<FeatureWordsOfPower index={i} key={i} rerolls={this.state.rerolls} upgradeMe={() => this.upgradeMe(i)} upgradeAvailable={upgradeAvailable} feature={this.state.features[i]} getTable={this.getTable} updateFeature={this.updateFeature} removeUpgrade={() => this.removeUpgrade(i)} rerollFeature={() => this.randomize("feature_" + i)} useReroll={this.useReroll} />]
                 }
             } else {
-                features[i] = <Button block className="random-button" key={i} disabled={this.state.rerolls <= 0 && this.state.features[i]} getTable={this.getTable.bind(this)} variant="outline-dark" onClick={() => this.randomize("feature_" + i)}>Roll Character Feature</Button>
+                features[i] = <Button block className="random-button" key={i} disabled={this.state.rerolls <= 0 && this.state.features[i]} variant="outline-dark" onClick={() => this.randomize("feature_" + i)}>Roll Character Feature</Button>
             }
         }
         return features;
