@@ -232,7 +232,7 @@ class CharSheet extends React.Component {
                 <Col xs={3} md={2} lg={1} key={i + 1}>
                     <Image
                         id={`armor-${i + 1}`}
-                        key={i}
+                        key={`armor-${i + 1}`}
                         className="heart-container"
                         alt={`${i + 1} Armor`}
                         fluid
